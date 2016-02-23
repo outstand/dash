@@ -15,14 +15,11 @@
     - name: Update Homebrew
       homebrew: update_homebrew=yes
 
-    - name: Tap Caskroom
-      homebrew_tap: tap=caskroom/cask
+    - name: Tap homebrew services
+      homebrew_tap: tap=homebrew/services
 
-    - name: Install Caskroom
-      homebrew: name=brew-cask state=latest
-
-    - name: Install Virtualbox
-      homebrew_cask: name=virtualbox state=present
+    - name: Install Parallels
+      homebrew_cask: name=parallels-desktop state=present
       environment:
         HOMEBREW_CASK_OPTS: --appdir=/Applications
 
@@ -33,6 +30,7 @@
       with_items:
         - docker
         - docker-machine
+        - docker-machine-parallels
         - docker-compose
 
     - name: Create resolver directory
@@ -49,22 +47,6 @@
       become: yes
       become_method: sudo
 
-    - name: Add NFS share to /etc/exports
-      blockinfile:
-        dest: /etc/exports
-        create: yes
-        marker: "## {mark} Dash Developer Environment - ANSIBLE MANAGED BLOCK ##"
-        content: '/Users 192.168.99.100 -alldirs -mapall=0:80'
-      become: yes
-      become_method: sudo
-      register: exports
-
-    - name: Restart nfsd
-      command: sudo nfsd restart
-      become: yes
-      become_method: sudo
-      when: exports.changed
-
     - name: Add Docker Machine Environment to .zshrc
       lineinfile:
         dest: ~/.zshrc
@@ -78,6 +60,3 @@
         line: "source {{ dev_env_dir }}/ansible/mac_profile"
         create: yes
       when: ansible_env.SHELL == "/bin/bash"
-
-    - name: Create Docker Machine
-      command: "{{ dev_env_dir }}/bin/dev machine create creates=~/.docker/machine/machines/dev/config.json"
