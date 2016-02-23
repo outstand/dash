@@ -47,7 +47,7 @@ HEREDOC
     if args.empty?
       puts `docker-machine --help`
     elsif args.first == 'env'
-      if `docker-machine status default` == 'Running'
+      if `docker-machine status default` =~ /Running/
         system('docker-machine env default')
       else
         $stderr.puts 'default is not running'
