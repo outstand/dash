@@ -25,7 +25,3 @@ if [ ! -e $RANCHER_OS_FILE ]; then
 fi
 
 docker-machine create --driver=parallels --parallels-memory=$MEMORY --parallels-boot2docker-url $DIR/cache/$RANCHER_OS_VERSION/rancheros.iso $MACHINE_NAME
-# if pgrep dnsmasq > /dev/null; then
-#   echo "Reloading dnsmasq (needs sudo)"
-#   sudo pkill -HUP dnsmasq
-# fi
