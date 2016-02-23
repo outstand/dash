@@ -32,6 +32,7 @@
         - docker-machine
         - docker-machine-parallels
         - docker-compose
+        - dnsmasq
 
     - name: Create resolver directory
       file: path=/etc/resolver state=directory mode=0755
@@ -44,6 +45,18 @@
         dest: /etc/resolver/dev
         state: link
         force: yes
+      become: yes
+      become_method: sudo
+
+    - name: Create dnsmasq configuration
+      file:
+        src: "{{ dev_env_dir }}/ansible/dnsmasq.conf"
+        dest: /usr/local/etc/dnsmasq.conf
+        state: link
+        force: yes
+
+    - name: Start dnsmasq
+      command: brew services start dnsmasq
       become: yes
       become_method: sudo
 
