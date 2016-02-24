@@ -14,7 +14,9 @@ if [ "$(docker-machine status $DOCKER_NODE)" != 'Running' ]; then
   if [ -f ~/.docker/config.json ]; then
     docker-machine scp ~/.docker/config.json $DOCKER_NODE:docker.config.json
   fi
-  docker-machine scp -r $DIR/preload $DOCKER_NODE:preload
+  if [ -d $DIR/preload ]; then
+    docker-machine scp -r $DIR/preload $DOCKER_NODE:preload
+  fi
   docker-machine scp $DIR/provision.sh $DOCKER_NODE:
   docker-machine ssh $DOCKER_NODE 'sudo ./provision.sh dev'
 fi

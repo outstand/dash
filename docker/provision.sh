@@ -28,10 +28,10 @@ mv docker.config.json /home/docker/.docker/config.json
 
 mkdir -p /var/lib/system-docker/preload /var/lib/docker/preload
 
-if [ "$(ls -A preload/system)" ]; then
+if [ -d preload/system ] && [ "$(ls -A preload/system)" ]; then
   mv preload/system/* /var/lib/system-docker/preload
 fi
-if [ "$(ls -A preload/user)" ]; then
+if [ -d preload/user ] && [ "$(ls -A preload/user)" ]; then
   mv preload/user/* /var/lib/docker/preload
 fi
 
