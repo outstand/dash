@@ -11,17 +11,17 @@
       command: ls
       become: yes
       become_method: sudo
+      changed_when: false
+
+    - name: Verify Parallels is installed
+      shell: test -n "$(mdfind 'kMDItemCFBundleIdentifier == com.parallels.desktop.console')"
+      changed_when: false
 
     - name: Update Homebrew
       homebrew: update_homebrew=yes
 
     - name: Tap homebrew services
       homebrew_tap: tap=homebrew/services
-
-    - name: Install Parallels
-      homebrew_cask: name=parallels-desktop state=present
-      environment:
-        HOMEBREW_CASK_OPTS: --appdir=/Applications
 
     - name: Install Docker and Extras
       homebrew:
