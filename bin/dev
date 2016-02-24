@@ -13,7 +13,6 @@ Commands:
   compose            Manage containers (default)
   machine            Manage the virtual machine
   update             Update Dash developer environment
-  dash               Manage Dash services (dnsmasq)
 
 HEREDOC
 
@@ -53,8 +52,15 @@ HEREDOC
         $stderr.puts 'default is not running'
       end
     elsif args.first == 'create'
+      args.shift
+      args.unshift("#{root_dir}/docker/start-dev.sh")
       system('sudo ls > /dev/null')
-      system("#{root_dir}/docker/start-dev.sh")
+      system(args.join(' '))
+      reload_dns
+    elsif args.first == 'create-cluster'
+      system('sudo ls > /dev/null')
+      system("#{root_dir}/docker/start-cluster.sh")
+      reload_dns
     elsif MACHINE_DNS_PROXY.include?(args.first)
       system('sudo ls > /dev/null')
       args.unshift('docker-machine')

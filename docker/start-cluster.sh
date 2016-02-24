@@ -10,7 +10,9 @@ if [ "$(docker-machine status $DOCKER_MASTER)" != 'Running' ]; then
   docker-machine scp $DIR/rancher/nomad-master.yml $DOCKER_MASTER:.
   docker-machine scp $DIR/rancher/parallels-tools.yml $DOCKER_MASTER:.
   docker-machine scp $DIR/rancher/start.sh $DOCKER_MASTER:.
-  docker-machine scp $DIR/rancher/docker.config.json $DOCKER_MASTER:.
+  if [ -f ~/.docker/config.json ]; then
+    docker-machine scp ~/.docker/config.json $DOCKER_NODE:docker.config.json
+  fi
   docker-machine scp -r $DIR/preload $DOCKER_MASTER:preload
   docker-machine scp $DIR/provision.sh $DOCKER_MASTER:
   docker-machine ssh $DOCKER_MASTER 'sudo ./provision.sh master'
@@ -31,7 +33,9 @@ create_client () {
     docker-machine scp $DIR/rancher/nomad-client.yml $name:.
     docker-machine scp $DIR/rancher/parallels-tools.yml $name:.
     docker-machine scp $DIR/rancher/start.sh $name:.
-    docker-machine scp $DIR/rancher/docker.config.json $name:.
+    if [ -f ~/.docker/config.json ]; then
+      docker-machine scp ~/.docker/config.json $DOCKER_NODE:docker.config.json
+    fi
     docker-machine scp -r $DIR/preload $name:preload
     docker-machine scp $DIR/provision.sh $name:
     docker-machine ssh $name "sudo ./provision.sh client $(docker-machine ip $DOCKER_MASTER)"
