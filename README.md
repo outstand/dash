@@ -10,7 +10,7 @@
 
 ## The tl;dr Version
 
-    bash <(curl -fsSL https://raw.githubusercontent.com/IFTTT/dash/master/bin/bootstrap)
+    bash <(curl -fsSL https://raw.githubusercontent.com/outstand/dash/master/bin/bootstrap)
     # Start a new shell and cd to a project that uses [Docker Compose](https://docs.docker.com/compose/)
     dev up
 
@@ -44,7 +44,7 @@ and will create:
 
 It should run idempotently, meaning you should be able to run it as many times as you want and it won't hurt anything. If it fails due to a temporary condition (like network issues), running it again should pick up where it left off. If new items are added to the script, running it against a functioning environment should only add the new things.
 
-    bash <(curl -fsSL https://raw.githubusercontent.com/IFTTT/dash/master/bin/bootstrap)
+    bash <(curl -fsSL https://raw.githubusercontent.com/outstand/dash/master/bin/bootstrap)
 
 After a successful installation, you can run the bootstrap again or you can instead run:
 
