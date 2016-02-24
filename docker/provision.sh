@@ -26,7 +26,9 @@ mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml /var/lib/rancher/conf/
 mkdir -p /opt/rancher/bin
 mv start.sh /opt/rancher/bin/
 mkdir -p /home/docker/.docker
-mv docker.config.json /home/docker/.docker/config.json
+if [ -f docker.config.json ]; then
+  mv docker.config.json /home/docker/.docker/config.json
+fi
 
 mkdir -p /var/lib/system-docker/preload /var/lib/docker/preload
 
