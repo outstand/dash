@@ -18,7 +18,9 @@ chown root:root consul-$MODE.yml
 chown root:root nomad-$MODE.yml
 chown root:root parallels-tools.yml
 chown root:root start.sh
-chown -R root:root preload
+if [ -d preload ]; then
+  chown -R root:root preload
+fi
 
 mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml /var/lib/rancher/conf/
 mkdir -p /opt/rancher/bin
