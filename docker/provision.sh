@@ -17,12 +17,13 @@ fi
 chown root:root consul-$MODE.yml
 chown root:root nomad-$MODE.yml
 chown root:root parallels-tools.yml
+chown root:root nfs-client.yml
 chown root:root start.sh
 if [ -d preload ]; then
   chown -R root:root preload
 fi
 
-mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml /var/lib/rancher/conf/
+mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml nfs-client.yml /var/lib/rancher/conf/
 mkdir -p /opt/rancher/bin
 mv start.sh /opt/rancher/bin/
 mkdir -p /home/docker/.docker
@@ -52,6 +53,7 @@ ros service enable kernel-headers
 ros service enable kernel-headers-system-docker
 ros service enable /var/lib/rancher/conf/consul-$MODE.yml
 ros service enable /var/lib/rancher/conf/nomad-$MODE.yml
-ros service enable /var/lib/rancher/conf/parallels-tools.yml
+#ros service enable /var/lib/rancher/conf/parallels-tools.yml
+ros service enable /var/lib/rancher/conf/nfs-client.yml
 
 reboot

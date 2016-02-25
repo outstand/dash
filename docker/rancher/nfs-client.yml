@@ -1,0 +1,18 @@
+nfs-client:
+  image: outstand/nfs-client
+  restart: always
+  labels:
+    - io.rancher.os.reloadconfig=true
+    - io.rancher.os.remove=false
+    - io.rancher.os.after=preload-user-images
+  container_name: nfs-client
+  volumes:
+    - /Users:/mnt/Users:shared
+  privileged: true
+  net: host
+  environment:
+    SERVER: 10.211.55.2
+    SHARE: /Users
+    MOUNTPOINT: /mnt/Users
+    FSTYPE: nfs
+    MOUNT_OPTIONS: nfsvers=3

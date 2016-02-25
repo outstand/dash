@@ -60,6 +60,22 @@
       become: yes
       become_method: sudo
 
+    - name: Add NFS share to /etc/exports
+      blockinfile:
+        dest: /etc/exports
+        create: yes
+        marker: "## {mark} Dash Developer Environment - ANSIBLE MANAGED BLOCK ##"
+        content: '/Users -network 10.211.55.0 -mask 255.255.255.0 -alldirs -mapall=0:80'
+      become: yes
+      become_method: sudo
+      register: exports
+
+    - name: Restart nfsd
+      command: nfsd restart
+      become: yes
+      become_method: sudo
+      when: exports.changed
+
     - name: Add Docker Machine Environment to .zshrc
       lineinfile:
         dest: ~/.zshrc
