@@ -1,0 +1,9 @@
+---
+:preferences:
+  :proxy_disabled: false
+  :fsevents_disabled: false
+  :create:
+    provider: parallels
+    boot2docker_url: https://github.com/rancher/os/releases/download/v0.4.3/rancheros.iso
+    provision_with: /usr/local/dev-env/docker/provision-dinghy.sh
+  :machine_name: default

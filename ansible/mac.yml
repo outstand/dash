@@ -23,6 +23,9 @@
     - name: Tap homebrew services
       homebrew_tap: tap=homebrew/services
 
+    - name: Tap outstand/dinghy
+      homebrew_tap: tap=outstand/dinghy
+
     - name: Install Docker and Extras
       homebrew:
         name: "{{ item }}"
@@ -32,49 +35,10 @@
         - docker-machine
         - docker-machine-parallels
         - docker-compose
-        - dnsmasq
+        - dinghy
 
-    - name: Create resolver directory
-      file: path=/etc/resolver state=directory mode=0755
-      become: yes
-      become_method: sudo
-
-    - name: Create dev resolver file at /etc/resolver/dev
-      file:
-        src: "{{ dev_env_dir }}/ansible/resolver-dev.conf"
-        dest: /etc/resolver/dev
-        state: link
-        force: yes
-      become: yes
-      become_method: sudo
-
-    - name: Create dnsmasq configuration
-      file:
-        src: "{{ dev_env_dir }}/ansible/dnsmasq.conf"
-        dest: /usr/local/etc/dnsmasq.conf
-        state: link
-        force: yes
-
-    - name: Start dnsmasq
-      command: brew services start dnsmasq
-      become: yes
-      become_method: sudo
-
-    - name: Add NFS share to /etc/exports
-      blockinfile:
-        dest: /etc/exports
-        create: yes
-        marker: "## {mark} Dash Developer Environment - ANSIBLE MANAGED BLOCK ##"
-        content: '/Users -network 10.211.55.0 -mask 255.255.255.0 -alldirs -mapall=0:80'
-      become: yes
-      become_method: sudo
-      register: exports
-
-    - name: Restart nfsd
-      command: nfsd restart
-      become: yes
-      become_method: sudo
-      when: exports.changed
+    - name: Install dinghy preferences
+      copy: src={{ dev_env_dir}}/docker/dinghy-preferences.yml dest=~/.dinghy/preferences.yml
 
     - name: Add Docker Machine Environment to .zshrc
       lineinfile:

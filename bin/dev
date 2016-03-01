@@ -17,7 +17,6 @@ Commands:
 HEREDOC
 
   TOP_COMMANDS=%w{compose machine update dash}
-  MACHINE_DNS_PROXY = %w{create kill restart rm start stop}
 
   def initialize(args)
     if args.empty?
@@ -38,7 +37,7 @@ HEREDOC
       puts `docker-compose --help`
     else
       args.unshift('docker-compose')
-      system(args.join(' '))
+      exec(args.join(' '))
     end
   end
 
@@ -57,33 +56,20 @@ HEREDOC
         $stderr.puts "#{machine_name} is not running"
       end
     elsif args.first == 'create'
-      args.shift
-      args.unshift("#{root_dir}/docker/start-dev.sh")
-      system('sudo ls > /dev/null')
-      system(args.join(' '))
-      reload_dns
+      puts 'Running `dinghy create` (ignoring args)'
+      exec('dinghy create')
     elsif args.first == 'create-cluster'
       system('sudo ls > /dev/null')
-      system("#{root_dir}/docker/start-cluster.sh")
-      reload_dns
-    elsif MACHINE_DNS_PROXY.include?(args.first)
-      system('sudo ls > /dev/null')
-      args.unshift('docker-machine')
-      system(args.join(' '))
-      reload_dns
+      exec("#{root_dir}/docker/start-cluster.sh")
     else
       args.unshift('docker-machine')
-      system(args.join(' '))
+      exec(args.join(' '))
     end
   end
 
-  def reload_dns
-    system('sudo pkill -HUP dnsmasq')
-  end
-
   def update(args)
-    #system('cd /usr/local/dev-env && git fetch && git reset --hard origin/master')
-    system("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1, --ask-become-pass")
+    system('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
+    exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1, --ask-become-pass")
   end
 
   def dash(args)
