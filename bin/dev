@@ -14,6 +14,10 @@ Commands:
   machine            Manage the virtual machine
   update             Update Dash developer environment
 
+Machine subcommands:
+  create-cluster
+  destroy
+
 HEREDOC
 
   TOP_COMMANDS=%w{compose machine update dash}
@@ -57,10 +61,17 @@ HEREDOC
       end
     elsif args.first == 'create'
       puts 'Running `dinghy create` (ignoring args)'
-      exec('dinghy create')
+      system('sudo ls > /dev/null')
+      system('dinghy create')
+      system("#{root_dir}/docker/provision-dinghy.sh")
+      exec('dinghy restart')
     elsif args.first == 'create-cluster'
       system('sudo ls > /dev/null')
       exec("#{root_dir}/docker/start-cluster.sh")
+    elsif args.first == 'destroy'
+      puts 'Running `dinghy destroy` (ignoring args)'
+      system('sudo ls > /dev/null')
+      exec('dinghy destroy')
     else
       args.unshift('docker-machine')
       exec(args.join(' '))
