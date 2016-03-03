@@ -24,7 +24,10 @@
       homebrew_tap: tap=homebrew/services
 
     - name: Tap outstand/dinghy
-      homebrew_tap: tap=outstand/dinghy
+      homebrew_tap: tap=outstand/dinghy state=present
+
+    - name: Untap codekitchen/dinghy
+      homebrew_tap: tap=codekitchen/dinghy state=absent
 
     - name: Install Docker and Extras
       homebrew:
