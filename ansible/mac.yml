@@ -17,17 +17,17 @@
       shell: test -n "$(mdfind 'kMDItemCFBundleIdentifier == com.parallels.desktop.console')"
       changed_when: false
 
-    - name: Update Homebrew
-      homebrew: update_homebrew=yes
-
     - name: Tap homebrew services
       homebrew_tap: tap=homebrew/services
 
-    - name: Tap outstand/dinghy
-      homebrew_tap: tap=outstand/dinghy state=present
+    - name: Untap outstand/dinghy
+      homebrew_tap: tap=outstand/dinghy state=absent
 
-    - name: Untap codekitchen/dinghy
-      homebrew_tap: tap=codekitchen/dinghy state=absent
+    - name: Tap codekitchen/dinghy
+      homebrew_tap: tap=codekitchen/dinghy state=present
+
+    - name: Update Homebrew
+      homebrew: update_homebrew=yes
 
     - name: Install Docker and Extras
       homebrew:
