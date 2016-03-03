@@ -40,7 +40,7 @@ HEREDOC
     if args.empty?
       puts `docker-compose --help`
     else
-      args.unshift('docker-compose')
+      args.unshift('docker-compose -f docker-compose.yml -f development.yml')
       exec(args.join(' '))
     end
   end
