@@ -14,9 +14,6 @@ if [ "$MODE" = 'client' ] && [ -z "$DOCKER_MASTER" ]; then
   exit 1
 fi
 
-rm -rf /usr/local/bin/docker/
-ln -sf /bin/docker /usr/local/bin/docker
-
 chown root:root consul-$MODE.yml
 chown root:root nomad-$MODE.yml
 chown root:root parallels-tools.yml

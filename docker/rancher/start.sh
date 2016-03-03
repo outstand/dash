@@ -9,6 +9,3 @@ mkdir /Users
 mount --bind /Users /Users
 mount --make-shared /Users
 mkdir -p /usr/src
-
-rm -rf /usr/local/bin/docker/
-ln -sf /bin/docker /usr/local/bin/docker
