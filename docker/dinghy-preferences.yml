@@ -7,4 +7,3 @@
     boot2docker_url: https://github.com/rancher/os/releases/download/v0.4.3/rancheros.iso
   :machine_name: default
   :dinghy_domain: dev
-  :remote_docker_location: /bin/docker
