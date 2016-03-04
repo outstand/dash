@@ -17,6 +17,7 @@ Commands:
 Machine subcommands:
   create-cluster
   destroy
+  up
 
 HEREDOC
 
@@ -71,6 +72,10 @@ HEREDOC
     elsif args.first == 'create-cluster'
       system('sudo ls > /dev/null')
       exec("#{root_dir}/docker/start-cluster.sh")
+    elsif args.first == 'up'
+      puts 'Running `dinghy up` (ignoring args)'
+      system('sudo ls > /dev/null')
+      exec('dinghy up')
     elsif args.first == 'destroy'
       puts 'Running `dinghy destroy` (ignoring args)'
       system('sudo ls > /dev/null')
