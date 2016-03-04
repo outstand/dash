@@ -63,7 +63,10 @@ HEREDOC
       puts 'Running `dinghy create` (ignoring args)'
       system('sudo ls > /dev/null')
       system('dinghy create')
-      system("#{root_dir}/docker/provision-dinghy.sh")
+      unless system("#{root_dir}/docker/provision-dinghy.sh")
+        $stderr.puts "Failed to provision!"
+        exit 1
+      end
       exec('dinghy restart')
     elsif args.first == 'create-cluster'
       system('sudo ls > /dev/null')
