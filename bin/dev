@@ -18,6 +18,8 @@ Machine subcommands:
   create-cluster
   destroy
   up
+  create (overridden)
+  stop (overridden)
 
 HEREDOC
 
@@ -76,6 +78,10 @@ HEREDOC
       puts 'Running `dinghy up` (ignoring args)'
       system('sudo ls > /dev/null')
       exec('dinghy up')
+    elsif args.first == 'stop'
+      puts 'Running `dinghy stop` (ignoring args)'
+      system('sudo ls > /dev/null')
+      exec('dinghy stop')
     elsif args.first == 'destroy'
       puts 'Running `dinghy destroy` (ignoring args)'
       system('sudo ls > /dev/null')
