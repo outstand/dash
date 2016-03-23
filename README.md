@@ -12,6 +12,8 @@
 
     bash <(curl -fsSL https://raw.githubusercontent.com/outstand/dash/master/bin/bootstrap)
     # Start a new shell and cd to a project that uses [Docker Compose](https://docs.docker.com/compose/)
+    dev machine create
+    eval $(dev machine env)
     dev up
 
 ## Step-By-Step Setup
