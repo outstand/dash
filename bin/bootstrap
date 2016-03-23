@@ -71,6 +71,6 @@ echo 'Checking out Dash repo...'
 git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
 
 ## Run Ansible Playbook ##
-echo 'Handing Playbook to Ansible (will require your sudo password)...'
+echo 'Handing Playbook to Ansible...'
 echo -e "\n\n"
 /usr/local/dev-env/bin/dev update
