@@ -40,6 +40,9 @@
         - docker-compose
         - dinghy
 
+    - name: Create dinghy preferences directory
+      file: path=~/.dinghy state=directory
+
     - name: Install dinghy preferences
       copy: src={{ dev_env_dir}}/docker/dinghy-preferences.yml dest=~/.dinghy/preferences.yml
 
