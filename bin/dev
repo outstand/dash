@@ -94,7 +94,7 @@ HEREDOC
 
   def update(args)
     system('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
-    exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1, --ask-become-pass")
+    exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1,")
   end
 
   def dash(args)

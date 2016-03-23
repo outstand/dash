@@ -7,11 +7,11 @@
 
   tasks:
 
-    - name: Check Sudo Password
-      command: ls
-      become: yes
-      become_method: sudo
-      changed_when: false
+    # - name: Check Sudo Password
+    #   command: ls
+    #   become: yes
+    #   become_method: sudo
+    #   changed_when: false
 
     - name: Verify Parallels is installed
       shell: test -n "$(mdfind 'kMDItemCFBundleIdentifier == com.parallels.desktop.console')"
