@@ -4,7 +4,7 @@
   :fsevents_disabled: false
   :create:
     provider: parallels
-    boot2docker_url: https://github.com/rancher/os/releases/download/v0.4.3/rancheros.iso
+    boot2docker_url: https://github.com/rancher/os/releases/download/v0.4.4/rancheros.iso
     memory: 4096
   :machine_name: default
   :dinghy_domain: dev

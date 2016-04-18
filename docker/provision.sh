@@ -48,10 +48,9 @@ if [ "$MODE" = 'client' ]; then
   ros config set rancher.environment.NOMAD_SERVERS $DOCKER_MASTER:4647
 fi
 
-ros config set rancher.services.preload-user-images.image 'outstand/os-preload:v0.4.4-dev'
 ros service enable kernel-headers
 ros service enable kernel-headers-system-docker
 ros service enable /var/lib/rancher/conf/consul-$MODE.yml
-ros service enable /var/lib/rancher/conf/nomad-$MODE.yml
+#ros service enable /var/lib/rancher/conf/nomad-$MODE.yml
 #ros service enable /var/lib/rancher/conf/parallels-tools.yml
 #ros service enable /var/lib/rancher/conf/nfs-client.yml
