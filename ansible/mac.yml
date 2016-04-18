@@ -26,15 +26,21 @@
     - name: Tap codekitchen/dinghy
       homebrew_tap: tap=codekitchen/dinghy state=present
 
+    - name: Tap outstand/docker
+      homebrew_tap: tap=outstand/docker state=present
+
     - name: Update Homebrew
       homebrew: update_homebrew=yes
+
+    - name: Remove docker
+      homebrew: name=docker state=absent
 
     - name: Install Docker and Extras
       homebrew:
         name: "{{ item }}"
         state: latest
       with_items:
-        - docker
+        - docker1103
         - docker-machine
         - docker-machine-parallels
         - docker-compose
