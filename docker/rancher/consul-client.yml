@@ -9,6 +9,6 @@ consul-client:
     - io.rancher.os.remove=false
   net: host
   container_name: consul
-  command: client -join=${CONSUL_JOIN_ADDRESS}
+  command: agent -ui -join=${CONSUL_JOIN_ADDRESS}
   environment:
     - CONSUL_BIND_INTERFACE=eth0

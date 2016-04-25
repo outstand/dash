@@ -9,6 +9,6 @@ consul-dev:
     - io.rancher.os.remove=false
   net: host
   container_name: consul
-  command: dev
+  command: agent -dev -ui
   environment:
     - CONSUL_BIND_INTERFACE=eth0
