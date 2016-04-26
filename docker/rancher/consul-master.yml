@@ -11,4 +11,5 @@ consul-master:
   container_name: consul
   command: agent -server -ui -bootstrap
   environment:
-    - CONSUL_BIND_INTERFACE=eth0
+      CONSUL_BIND_INTERFACE: eth0
+      CONSUL_LOCAL_CONFIG: '{"skip_leave_on_interrupt": true}'

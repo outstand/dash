@@ -11,4 +11,5 @@ consul-client:
   container_name: consul
   command: agent -ui -join=${CONSUL_JOIN_ADDRESS}
   environment:
-    - CONSUL_BIND_INTERFACE=eth0
+    CONSUL_BIND_INTERFACE: eth0
+    CONSUL_LOCAL_CONFIG: '{"leave_on_terminate": true}'
