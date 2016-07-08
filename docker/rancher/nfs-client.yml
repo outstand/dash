@@ -2,7 +2,6 @@ nfs-client:
   image: outstand/nfs-client
   restart: always
   labels:
-    - io.rancher.os.reloadconfig=true
     - io.rancher.os.remove=false
     - io.rancher.os.after=preload-user-images
   container_name: nfs-client

@@ -2,7 +2,6 @@ parallels-tools:
   image: outstand/parallels-tools:latest
   restart: always
   labels:
-    - io.rancher.os.reloadconfig=true
     - io.rancher.os.remove=false
     - io.rancher.os.after=preload-user-images
   container_name: parallels-tools

@@ -7,9 +7,8 @@ if [ "$(docker-machine status $DOCKER_MASTER)" != 'Running' ]; then
   $DIR/create-machine.sh $DOCKER_MASTER 1024
 
   docker-machine scp $DIR/rancher/consul-master.yml $DOCKER_MASTER:.
-  docker-machine scp $DIR/rancher/nomad-master.yml $DOCKER_MASTER:.
-  docker-machine scp $DIR/rancher/parallels-tools.yml $DOCKER_MASTER:.
-  docker-machine scp $DIR/rancher/nfs-client.yml $DOCKER_MASTER:.
+  # docker-machine scp $DIR/rancher/parallels-tools.yml $DOCKER_MASTER:.
+  # docker-machine scp $DIR/rancher/nfs-client.yml $DOCKER_MASTER:.
   docker-machine scp $DIR/rancher/start.sh $DOCKER_MASTER:.
   if [ -f ~/.docker/config.json ]; then
     docker-machine scp ~/.docker/config.json $DOCKER_NODE:docker.config.json
@@ -34,9 +33,8 @@ create_client () {
     $DIR/create-machine.sh $name
 
     docker-machine scp $DIR/rancher/consul-client.yml $name:.
-    docker-machine scp $DIR/rancher/nomad-client.yml $name:.
-    docker-machine scp $DIR/rancher/parallels-tools.yml $name:.
-    docker-machine scp $DIR/rancher/nfs-client.yml $name:.
+    # docker-machine scp $DIR/rancher/parallels-tools.yml $name:.
+    # docker-machine scp $DIR/rancher/nfs-client.yml $name:.
     docker-machine scp $DIR/rancher/start.sh $name:.
     if [ -f ~/.docker/config.json ]; then
       docker-machine scp ~/.docker/config.json $DOCKER_NODE:docker.config.json

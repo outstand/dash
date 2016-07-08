@@ -14,7 +14,7 @@ if [ -z "$MEMORY" ]; then
   MEMORY="2048"
 fi
 
-RANCHER_OS_VERSION=v0.4.3
+RANCHER_OS_VERSION=v0.5.0
 RANCHER_OS_URL=https://github.com/rancher/os/releases/download/$RANCHER_OS_VERSION/rancheros.iso
 RANCHER_OS_FILE=$DIR/cache/$RANCHER_OS_VERSION/rancheros.iso
 

@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Set up route_localnet as a default because docker0 isn't up yet but public facing interfaces are
-sysctl -w net.ipv4.conf.default.route_localnet=1
-iptables -t nat -A PREROUTING -p tcp -s 172.17.0.0/16 -d 172.17.0.1 --dport 8500 -j DNAT --to-destination 127.0.0.1
-iptables -t nat -A PREROUTING -p tcp -s 172.19.0.0/16 -d 172.19.0.1 --dport 8500 -j DNAT --to-destination 127.0.0.1
+INSTANCE_IP=$(ip -o -4 -br addr show eth0 | awk '{print $3}' | cut -d/ -f1)
+iptables -t nat -A PREROUTING -p tcp -d 127.0.0.1 --dport 8400 -j DNAT --to ${INSTANCE_IP}
+iptables -t nat -A PREROUTING -p tcp -d 127.0.0.1 --dport 8500 -j DNAT --to ${INSTANCE_IP}
+iptables -t nat -A OUTPUT -o lo -p tcp -m tcp --dport 8400 -j DNAT --to ${INSTANCE_IP}
+iptables -t nat -A OUTPUT -o lo -p tcp -m tcp --dport 8500 -j DNAT --to ${INSTANCE_IP}
 
-mkdir /Users
-mount --bind /Users /Users
-mount --make-shared /Users
+# mkdir /Users
+# mount --bind /Users /Users
+# mount --make-shared /Users
 mkdir -p /usr/src

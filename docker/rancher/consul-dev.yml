@@ -1,14 +1,10 @@
 consul-dev:
-  image: outstand/consul:latest
+  image: consul:v0.6.4
   restart: always
   labels:
-    - io.rancher.os.scope=system
-    - io.rancher.os.after=wait-for-network
-    - io.rancher.os.before=docker
-    - io.rancher.os.reloadconfig=true
     - io.rancher.os.remove=false
   net: host
-  container_name: consul
   command: agent -dev -ui
   environment:
-    - CONSUL_BIND_INTERFACE=eth0
+    CONSUL_BIND_INTERFACE: eth0
+    CONSUL_CLIENT_INTERFACE: eth0
