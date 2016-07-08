@@ -40,7 +40,7 @@
         name: "{{ item }}"
         state: latest
       with_items:
-        - docker1103
+        - docker111
         - docker-machine
         - docker-machine-parallels
         - docker-compose
