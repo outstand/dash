@@ -34,6 +34,12 @@
 
     - name: Remove docker
       homebrew: name=docker state=absent
+      homebrew:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - docker
+        - docker1103
 
     - name: Install Docker and Extras
       homebrew:
