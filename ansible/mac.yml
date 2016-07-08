@@ -33,7 +33,6 @@
       homebrew: update_homebrew=yes
 
     - name: Remove docker
-      homebrew: name=docker state=absent
       homebrew:
         name: "{{ item }}"
         state: absent
