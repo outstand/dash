@@ -5,6 +5,8 @@ DOCKER_NODE=${1:-default}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 docker-machine scp $DIR/rancher/consul-dev.yml $DOCKER_NODE:.
+docker-machine scp $DIR/rancher/schmooze.yml $DOCKER_NODE:.
+docker-machine scp $DIR/rancher/dns.yml $DOCKER_NODE:.
 #docker-machine scp $DIR/rancher/parallels-tools.yml $DOCKER_NODE:.
 #docker-machine scp $DIR/rancher/nfs-client.yml $DOCKER_NODE:.
 docker-machine scp $DIR/rancher/start.sh $DOCKER_NODE:.

@@ -1,0 +1,10 @@
+schmooze:
+  image: outstand/schmooze:latest
+  command: dns Name=dns Driver=bridge CheckDuplicate:=true IPAM:='{"Config":[{"Subnet":"10.10.10.0/24","IPRange":"10.10.10.1/30"}]}' Options:='{"com.docker.network.bridge.enable_icc":"true","com.docker.network.bridge.enable_ip_masquerade":"true","com.docker.network.bridge.name":"dns"}'
+  net: host
+  cap_add:
+    - NET_ADMIN
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  labels:
+    io.rancher.os.detach: "false"

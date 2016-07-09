@@ -1,0 +1,11 @@
+dns:
+  image: outstand/selfish-dns:latest
+  restart: always
+  command: -A /consul/INSTANCE_IP
+  environment:
+    - INSTANCE_IP
+  net: dns
+  cap_add:
+    - NET_ADMIN
+  labels:
+    io.rancher.os.after: schmooze
