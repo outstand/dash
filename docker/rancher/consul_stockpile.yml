@@ -1,0 +1,11 @@
+consul_stockpile:
+  image: outstand/consul_stockpile:0.1.5
+  restart: always
+  labels:
+    - io.rancher.os.remove=false
+  net: host
+  command: start -b bucket -n backup
+  volumes:
+    - /opt/consul_stockpile:/fog
+  environment:
+    - FOG_LOCAL=true
