@@ -3,10 +3,8 @@ parallels-tools:
   restart: always
   labels:
     - io.rancher.os.remove=false
-    - io.rancher.os.after=preload-user-images
-  container_name: parallels-tools
+    - io.rancher.os.after=kernel-headers
   volumes:
     - /usr/src:/usr/src
     - /lib/modules:/lib/modules
-    - /Users:/media/psf/Users:shared
   privileged: true
