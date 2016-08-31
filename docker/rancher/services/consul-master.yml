@@ -1,11 +1,11 @@
-consul-client:
+consul:
   image: consul:v0.6.4
   restart: always
   labels:
     - io.rancher.os.remove=false
   net: host
-  command: agent -ui -join=${CONSUL_JOIN_ADDRESS}
+  command: agent -server -ui -bootstrap
   environment:
     CONSUL_BIND_INTERFACE: eth0
     CONSUL_CLIENT_INTERFACE: eth0
-    CONSUL_LOCAL_CONFIG: '{"leave_on_terminate": true}'
+    CONSUL_LOCAL_CONFIG: '{"skip_leave_on_interrupt": true}'

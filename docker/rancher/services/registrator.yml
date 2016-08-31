@@ -1,0 +1,9 @@
+registrator:
+  image: outstand/registrator:v7
+  labels:
+    - io.rancher.os.after=consul
+  restart: always
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+  command: consul://127.0.0.1:8500
+  net: host

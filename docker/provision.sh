@@ -14,19 +14,14 @@ if [ "$MODE" = 'client' ] && [ -z "$DOCKER_MASTER" ]; then
   exit 1
 fi
 
-chown root:root consul-$MODE.yml
-chown root:root schmooze.yml
-chown root:root dns.yml
-chown root:root consul_stockpile.yml
-chown root:root parallels-tools.yml
-#chown root:root nfs-client.yml
+chown -R root:root services
 chown root:root start.sh
 if [ -d preload ]; then
   chown -R root:root preload
 fi
 
 #mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml nfs-client.yml /var/lib/rancher/conf/
-mv consul-$MODE.yml schmooze.yml dns.yml consul_stockpile.yml parallels-tools.yml /var/lib/rancher/conf/
+mv services/* /var/lib/rancher/conf/
 mkdir -p /opt/rancher/bin
 mv start.sh /opt/rancher/bin/
 mkdir -p /home/docker/.docker
@@ -61,3 +56,4 @@ ros service enable /var/lib/rancher/conf/consul_stockpile.yml
 #ros service enable /var/lib/rancher/conf/nomad-$MODE.yml
 ros service enable /var/lib/rancher/conf/parallels-tools.yml
 #ros service enable /var/lib/rancher/conf/nfs-client.yml
+ros service enable /var/lib/rancher/conf/registrator.yml
