@@ -1,5 +1,5 @@
 consul:
-  image: consul:v0.6.4
+  image: consul:0.7.1
   restart: always
   labels:
     - io.rancher.os.remove=false
@@ -8,4 +8,3 @@ consul:
   environment:
     CONSUL_BIND_INTERFACE: eth0
     CONSUL_CLIENT_INTERFACE: eth0
-    CONSUL_LOCAL_CONFIG: '{"leave_on_terminate": true}'
