@@ -70,3 +70,9 @@
         line: "source {{ dev_env_dir }}/ansible/mac_profile"
         create: yes
       when: ansible_env.SHELL == "/bin/bash"
+
+    - name: Ensure ~/.irb_history exists
+      copy:
+        content: ''
+        dest: ~/.irb_history
+        force: no
