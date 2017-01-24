@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'open3'
+require 'pathname'
 
 class DevTool
   MAIN_HELP_BANNER = <<HEREDOC
@@ -43,7 +44,11 @@ HEREDOC
     if args.empty?
       puts `docker-compose --help`
     else
-      args.unshift('docker-compose -f docker-compose.yml -f development.yml')
+      if (Pathname.pwd + 'development.yml').file?
+        args.unshift('docker-compose -f docker-compose.yml -f development.yml')
+      else
+        args.unshift('docker-compose -f docker-compose.yml')
+      end
       exec(args.join(' '))
     end
   end
