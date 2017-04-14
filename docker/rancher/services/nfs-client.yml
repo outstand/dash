@@ -1,5 +1,5 @@
 nfs-client:
-  image: outstand/nfs-client
+  image: outstand/nfs-client:latest
   restart: always
   labels:
     - io.rancher.os.remove=false
