@@ -19,7 +19,8 @@ PermitRootLogin no
 ServerKeyBits 2048
 AllowGroups docker
 
-KexAlgorithms curve25519-sha256@libssh.org
+# We include dh-sha1 here for fsevents
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha1
 Protocol 2
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKey /etc/ssh/ssh_host_rsa_key
