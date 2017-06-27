@@ -6,5 +6,3 @@ schmooze:
     - NET_ADMIN
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-  labels:
-    io.rancher.os.detach: "false"
