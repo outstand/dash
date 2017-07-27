@@ -1,0 +1,6 @@
+multiarch:
+  image: multiarch/qemu-user-static:register
+  privileged: true
+  command: --reset
+  labels:
+    - io.rancher.os.detach=false
