@@ -69,7 +69,7 @@ echo -e "\n\n"
 ## Check out a copy of this repo (first time only) ##
 echo 'Checking out Dash repo...'
 sudo mkdir /usr/local/dev-env
-sudo chown ${HOME}:admin /usr/local/dev-env
+sudo chown ${USER}:admin /usr/local/dev-env
 git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
 
 ## Run Ansible Playbook ##
