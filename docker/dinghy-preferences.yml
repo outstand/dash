@@ -4,7 +4,7 @@
   :fsevents_disabled: false
   :create:
     provider: parallels
-    boot2docker_url: https://releases.rancher.com/os/v1.0.1/rancheros.iso
+    boot2docker_url: https://releases.rancher.com/os/v1.0.4/rancheros.iso
     memory: 5116
     disk: 60000
     cpus: 4
