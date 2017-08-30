@@ -16,7 +16,6 @@ AuthorizedKeysFile .ssh/authorized_keys
 Subsystem sftp /usr/libexec/sftp-server
 UseDNS no
 PermitRootLogin no
-ServerKeyBits 2048
 AllowGroups docker
 
 # We include dh-sha1 here for fsevents
