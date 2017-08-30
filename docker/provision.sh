@@ -47,8 +47,10 @@ fi
 
 ros config set rancher.environment.INSTANCE_IP $(ip -o -4 addr show eth0 | awk '{print $4}' | cut -d/ -f1)
 
+ros config set rancher.docker.storage_driver overlay2
+ros engine enable docker-17.06.0-ce
+
 ros service enable kernel-headers
-#ros service enable kernel-headers-system-docker
 ros service enable /var/lib/rancher/conf/consul-$MODE.yml
 ros service enable /var/lib/rancher/conf/schmooze.yml
 ros service enable /var/lib/rancher/conf/dns.yml
@@ -57,3 +59,4 @@ ros service enable /var/lib/rancher/conf/consul_stockpile.yml
 ros service enable /var/lib/rancher/conf/parallels-tools.yml
 #ros service enable /var/lib/rancher/conf/nfs-client.yml
 ros service enable /var/lib/rancher/conf/registrator.yml
+ros service enable /var/lib/rancher/conf/multiarch.yml
