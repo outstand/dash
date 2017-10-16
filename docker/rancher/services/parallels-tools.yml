@@ -1,5 +1,5 @@
 parallels-tools:
-  image: outstand/parallels-tools:12.2.1.41615
+  image: outstand/parallels-tools:13.0.1.42947
   restart: always
   labels:
     - io.rancher.os.remove=false
