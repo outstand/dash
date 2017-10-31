@@ -28,6 +28,10 @@ mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
   mv docker.config.json /home/docker/.docker/config.json
 fi
+if [ -f sysctl.yml ]; then
+  chown root:root sysctl.yml
+  mv sysctl.yml /var/lib/rancher/conf/
+fi
 
 mkdir -p /var/lib/system-docker/preload /var/lib/docker/preload
 
@@ -51,6 +55,10 @@ ros config set rancher.docker.storage_driver overlay2
 # 17.06.1 is only available on rancherOS 1.1.0 and up
 # ros engine enable docker-17.06.1-ce
 ros engine enable docker-17.06.0-ce
+
+if [ -f /var/lib/rancher/conf/sysctl.yml ]; then
+  ros config merge -i /var/lib/rancher/conf/sysctl.yml
+fi
 
 ros service enable kernel-headers
 ros service enable /var/lib/rancher/conf/consul-$MODE.yml
