@@ -9,4 +9,6 @@
     disk: 60000
     cpus: 4
   :machine_name: default
-  :dinghy_domain: dev
+  :dinghy_domain: test
+  :unfs_disabled: false
+  :dns_disabled: false
