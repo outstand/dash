@@ -52,9 +52,7 @@ fi
 ros config set rancher.environment.INSTANCE_IP $(ip -o -4 addr show eth0 | awk '{print $4}' | cut -d/ -f1)
 
 ros config set rancher.docker.storage_driver overlay2
-# 17.06.1 is only available on rancherOS 1.1.0 and up
-# ros engine enable docker-17.06.1-ce
-ros engine enable docker-17.06.0-ce
+ros engine enable docker-17.09.1-ce
 
 if [ -f /var/lib/rancher/conf/sysctl.yml ]; then
   ros config merge -i /var/lib/rancher/conf/sysctl.yml
