@@ -41,18 +41,26 @@ HEREDOC
   end
 
   def compose(args)
-    if args.empty?
-      puts `docker-compose --help`
-    else
-      if (Pathname.pwd + 'docker-compose.override.yml').file?
-        args.unshift('-f docker-compose.override.yml')
-      end
-      if (Pathname.pwd + 'development.yml').file?
-        args.unshift('-f development.yml')
-      end
+    project_dir = `git rev-parse --show-toplevel`.chomp
+    if $? != 0
+      puts 'Warning: unable to automatically detect project dir'
+      project_dir = '.'
+    end
 
-      args.unshift('docker-compose -f docker-compose.yml')
-      exec(args.join(' '))
+    Dir.chdir(project_dir) do
+      if args.empty?
+        puts `docker-compose --help`
+      else
+        if (Pathname.pwd + 'docker-compose.override.yml').file?
+          args.unshift('-f docker-compose.override.yml')
+        end
+        if (Pathname.pwd + 'development.yml').file?
+          args.unshift('-f development.yml')
+        end
+
+        args.unshift('docker-compose -f docker-compose.yml')
+        exec(args.join(' '))
+      end
     end
   end
 
