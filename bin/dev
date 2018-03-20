@@ -24,7 +24,7 @@ Machine subcommands:
 
 HEREDOC
 
-  TOP_COMMANDS=%w{compose machine update dash}
+  TOP_COMMANDS=%w{compose machine update}
 
   def initialize(args)
     if args.empty?
@@ -41,18 +41,26 @@ HEREDOC
   end
 
   def compose(args)
-    if args.empty?
-      puts `docker-compose --help`
-    else
-      if (Pathname.pwd + 'docker-compose.override.yml').file?
-        args.unshift('-f docker-compose.override.yml')
-      end
-      if (Pathname.pwd + 'development.yml').file?
-        args.unshift('-f development.yml')
-      end
+    project_dir = `git rev-parse --show-toplevel`.chomp
+    if $? != 0
+      puts 'Warning: unable to automatically detect project dir'
+      project_dir = '.'
+    end
 
-      args.unshift('docker-compose -f docker-compose.yml')
-      exec(args.join(' '))
+    Dir.chdir(project_dir) do
+      if args.empty?
+        puts `docker-compose --help`
+      else
+        if (Pathname.pwd + 'docker-compose.override.yml').file?
+          args.unshift('-f docker-compose.override.yml')
+        end
+        if (Pathname.pwd + 'development.yml').file?
+          args.unshift('-f development.yml')
+        end
+
+        args.unshift('docker-compose -f docker-compose.yml')
+        exec(args.join(' '))
+      end
     end
   end
 
@@ -103,10 +111,6 @@ HEREDOC
   def update(args)
     system('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
     exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1,")
-  end
-
-  def dash(args)
-    #system('brew services start dnsmasq')
   end
 
   def root_dir
