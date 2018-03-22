@@ -29,6 +29,9 @@
     - name: Untap outstand/docker
       homebrew_tap: tap=outstand/docker state=absent
 
+    - name: Tap outstand/desk
+      homebrew_tap: tap=outstand/desk state=present
+
     - name: Update Homebrew
       homebrew: update_homebrew=yes
 
@@ -50,6 +53,7 @@
         - docker-machine-parallels
         - docker-compose
         - dinghy
+        - outstand/desk/desk
 
     - name: Create dinghy preferences directory
       file: path=~/.dinghy state=directory
@@ -68,6 +72,20 @@
       lineinfile:
         dest: ~/.bash_profile
         line: "source {{ dev_env_dir }}/ansible/mac_profile"
+        create: yes
+      when: ansible_env.SHELL == "/bin/bash"
+
+    - name: Add desk to .zshrc
+      lineinfile:
+        dest: ~/.zshrc
+        line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
+        create: yes
+      when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
+
+    - name: Add desk to .bashrc
+      lineinfile:
+        dest: ~/.bash_profile
+        line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
         create: yes
       when: ansible_env.SHELL == "/bin/bash"
 
