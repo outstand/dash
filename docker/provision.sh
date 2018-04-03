@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -x
+set -ex
 
 MODE=$1
 DOCKER_MASTER=$2
@@ -51,20 +51,11 @@ fi
 
 ros config set rancher.environment.INSTANCE_IP $(ip -o -4 addr show eth0 | awk '{print $4}' | cut -d/ -f1)
 
-ros config set rancher.docker.storage_driver overlay2
-ros engine enable docker-17.09.1-ce
-
 if [ -f /var/lib/rancher/conf/sysctl.yml ]; then
   ros config merge -i /var/lib/rancher/conf/sysctl.yml
 fi
 
-ros service enable kernel-headers
-ros service enable /var/lib/rancher/conf/consul-$MODE.yml
-ros service enable /var/lib/rancher/conf/schmooze.yml
-ros service enable /var/lib/rancher/conf/dns.yml
-ros service enable /var/lib/rancher/conf/consul_stockpile.yml
-#ros service enable /var/lib/rancher/conf/nomad-$MODE.yml
-ros service enable /var/lib/rancher/conf/parallels-tools.yml
-#ros service enable /var/lib/rancher/conf/nfs-client.yml
-ros service enable /var/lib/rancher/conf/registrator.yml
-ros service enable /var/lib/rancher/conf/multiarch.yml
+ros config set rancher.docker.storage_driver overlay2
+sed -ie 's/storage-driver overlay/storage-driver overlay2/' /var/lib/rancher/conf/docker
+ros engine enable docker-17.09.1-ce
+# storage_driver changes and `engine enable` require an immediate reboot!
