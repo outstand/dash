@@ -54,6 +54,7 @@
         - docker-compose
         - dinghy
         - outstand/desk/desk
+        - zsh
 
     - name: Create dinghy preferences directory
       file: path=~/.dinghy state=directory
