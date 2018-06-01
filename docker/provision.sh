@@ -15,7 +15,7 @@ if [ "$MODE" = 'client' ] && [ -z "$DOCKER_MASTER" ]; then
 fi
 
 chown -R root:root services
-chown root:root start.sh
+chown root:root start.sh rc.local
 if [ -d preload ]; then
   chown -R root:root preload
 fi
@@ -29,9 +29,9 @@ mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
   mv docker.config.json /home/docker/.docker/config.json
 fi
-if [ -f sysctl.yml ]; then
-  chown root:root sysctl.yml
-  mv sysctl.yml /var/lib/rancher/conf/
+if [ -f cloud-config.yml ]; then
+  chown root:root cloud-config.yml
+  mv cloud-config.yml /var/lib/rancher/conf/custom-cloud-config.yml
 fi
 
 mkdir -p /var/lib/system-docker/preload /var/lib/docker/preload
@@ -52,8 +52,8 @@ fi
 
 ros config set rancher.environment.INSTANCE_IP $(ip -o -4 addr show eth0 | awk '{print $4}' | cut -d/ -f1)
 
-if [ -f /var/lib/rancher/conf/sysctl.yml ]; then
-  ros config merge -i /var/lib/rancher/conf/sysctl.yml
+if [ -f /var/lib/rancher/conf/custom-cloud-config.yml ]; then
+  ros config merge -i /var/lib/rancher/conf/custom-cloud-config.yml
 fi
 
 ros config set rancher.docker.storage_driver overlay2

@@ -1,0 +1,17 @@
+#cloud-config
+write_files:
+  - path: /etc/rc.local
+    permissions: "0755"
+    owner: root
+    content: |
+      #!/bin/bash
+      wait-for-docker
+      docker network create \
+        --driver=bridge --subnet=10.10.10.0/24 --ip-range=10.10.10.1/30 \
+        -o com.docker.network.bridge.enable_icc=true \
+        -o com.docker.network.bridge.enable_ip_masquerade=true \
+        -o com.docker.network.bridge.name=dns \
+        dns
+rancher:
+  sysctl:
+    vm.max_map_count: 262144
