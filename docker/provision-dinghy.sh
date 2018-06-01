@@ -6,6 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 docker-machine scp -r $DIR/rancher/services $DOCKER_NODE:services
 docker-machine scp $DIR/rancher/start.sh $DOCKER_NODE:.
+docker-machine scp $DIR/rancher/rc.local $DOCKER_NODE:.
 if [ -f ~/.docker/config.json ]; then
   docker-machine scp ~/.docker/config.json $DOCKER_NODE:docker.config.json
 fi

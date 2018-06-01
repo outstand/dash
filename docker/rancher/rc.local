@@ -1,0 +1,9 @@
+#!/bin/bash
+
+wait-for-docker
+docker network create \
+  --driver=bridge --subnet=10.10.10.0/24 --ip-range=10.10.10.1/30 \
+  -o com.docker.network.bridge.enable_icc=true \
+  -o com.docker.network.bridge.enable_ip_masquerade=true \
+  -o com.docker.network.bridge.name=dns \
+  dns

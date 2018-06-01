@@ -24,6 +24,7 @@ fi
 mv services/* /var/lib/rancher/conf/
 mkdir -p /opt/rancher/bin
 mv start.sh /opt/rancher/bin/
+mv rc.local /etc/
 mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
   mv docker.config.json /home/docker/.docker/config.json
