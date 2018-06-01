@@ -1,8 +1,0 @@
-schmooze:
-  image: outstand/schmooze:latest
-  command: start -b dns --subnet 10.10.10.0/24 --ip-range 10.10.10.1/30
-  net: host
-  cap_add:
-    - NET_ADMIN
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock

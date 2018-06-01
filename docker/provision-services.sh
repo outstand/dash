@@ -6,7 +6,6 @@ MODE=$1
 ros service enable kernel-headers
 ros service up kernel-headers
 ros service enable /var/lib/rancher/conf/consul-$MODE.yml
-ros service enable /var/lib/rancher/conf/schmooze.yml
 ros service enable /var/lib/rancher/conf/dns.yml
 ros service enable /var/lib/rancher/conf/consul_stockpile.yml
 #ros service enable /var/lib/rancher/conf/nomad-$MODE.yml

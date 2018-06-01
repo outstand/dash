@@ -6,6 +6,9 @@ iptables -t nat -A PREROUTING -p tcp -d 127.0.0.1 --dport 8500 -j DNAT --to ${IN
 iptables -t nat -A OUTPUT -o lo -p tcp -m tcp --dport 8400 -j DNAT --to ${INSTANCE_IP}
 iptables -t nat -A OUTPUT -o lo -p tcp -m tcp --dport 8500 -j DNAT --to ${INSTANCE_IP}
 
+iptables -I DOCKER-USER -i dns -j ACCEPT
+iptables -I DOCKER-USER -o dns -j ACCEPT
+
 # mkdir /Users
 # mount --bind /Users /Users
 # mount --make-shared /Users
