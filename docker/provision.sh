@@ -15,7 +15,7 @@ if [ "$MODE" = 'client' ] && [ -z "$DOCKER_MASTER" ]; then
 fi
 
 chown -R root:root services
-chown root:root start.sh rc.local
+chown root:root start.sh
 if [ -d preload ]; then
   chown -R root:root preload
 fi
@@ -24,7 +24,6 @@ fi
 mv services/* /var/lib/rancher/conf/
 mkdir -p /opt/rancher/bin
 mv start.sh /opt/rancher/bin/
-mv rc.local /etc/
 mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
   mv docker.config.json /home/docker/.docker/config.json
