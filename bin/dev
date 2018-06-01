@@ -86,7 +86,8 @@ HEREDOC
         $stderr.puts "Failed to provision!"
         exit 1
       end
-      exec('dinghy restart')
+      system('dinghy restart')
+      system('eval $(dinghy env); docker start dns > /dev/null')
     elsif args.first == 'create-cluster'
       system('sudo ls > /dev/null')
       exec("#{root_dir}/docker/start-cluster.sh")
