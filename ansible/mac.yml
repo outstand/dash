@@ -20,14 +20,11 @@
     - name: Tap homebrew services
       homebrew_tap: tap=homebrew/services
 
-    - name: Untap outstand/dinghy
-      homebrew_tap: tap=outstand/dinghy state=absent
+    - name: Tap outstand/dinghy
+      homebrew_tap: tap=outstand/dinghy state=present
 
     - name: Tap codekitchen/dinghy
       homebrew_tap: tap=codekitchen/dinghy state=present
-
-    - name: Untap outstand/docker
-      homebrew_tap: tap=outstand/docker state=absent
 
     - name: Tap outstand/desk
       homebrew_tap: tap=outstand/desk state=present
@@ -52,7 +49,7 @@
         - docker-machine
         - docker-machine-parallels
         - docker-compose
-        - dinghy
+        - outstand/dinghy/dinghy
         - outstand/desk/desk
         - zsh
 
