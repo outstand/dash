@@ -6,6 +6,12 @@
     dev_env_dir: /usr/local/dev-env
 
   tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 600
+      become: yes
+
     - name: Install apt https support
       apt:
         name: "{{ packages }}"
@@ -52,50 +58,66 @@
         checksum: sha256:f679a24b93f291c3bffaff340467494f388c0c251649d640e661d509db9d57e9
       become: yes
 
-    # - name: Install dory
-    #   gem:
-    #     name: dory
-    #     state: latest
+    - name: Install ruby
+      apt:
+        name: ruby
+        state: latest
+      become: yes
 
-    # - name: Tap outstand/desk
-    #   homebrew_tap: tap=outstand/desk state=present
-    #
-    # - name: Create dinghy preferences directory
-    #   file: path=~/.dinghy state=directory
-    #
-    # - name: Install dinghy preferences
-    #   copy: src={{ dev_env_dir}}/docker/dinghy-preferences.yml dest=~/.dinghy/preferences.yml
+    - name: Install dory
+      gem:
+        name: dory
+        state: latest
 
-    # - name: Add Docker Machine Environment to .zshrc
-    #   lineinfile:
-    #     dest: ~/.zshrc
-    #     line: "source {{ dev_env_dir }}/ansible/dash_profile"
-    #     create: yes
-    #   when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
-    #
-    # - name: Add Docker Machine Environment to .bash_profile
-    #   lineinfile:
-    #     dest: ~/.bash_profile
-    #     line: "source {{ dev_env_dir }}/ansible/dash_profile"
-    #     create: yes
-    #   when: ansible_env.SHELL == "/bin/bash"
-    #
-    # - name: Add desk to .zshrc
-    #   lineinfile:
-    #     dest: ~/.zshrc
-    #     line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
-    #     create: yes
-    #   when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
-    #
-    # - name: Add desk to .bashrc
-    #   lineinfile:
-    #     dest: ~/.bash_profile
-    #     line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
-    #     create: yes
-    #   when: ansible_env.SHELL == "/bin/bash"
-    #
-    # - name: Ensure ~/.irb_history exists
-    #   copy:
-    #     content: ''
-    #     dest: ~/.irb_history
-    #     force: no
+    - name: Install desk
+      get_url:
+        url: https://raw.githubusercontent.com/outstand/desk/master/desk
+        dest: /usr/local/bin/desk
+        mode: 0755
+      become: yes
+
+    - name: Install zsh
+      apt:
+        name: zsh
+        state: latest
+      become: yes
+
+    - name: Create dinghy preferences directory
+      file: path=~/.dinghy state=directory
+
+    - name: Install dinghy preferences
+      copy: src={{ dev_env_dir}}/docker/dinghy-preferences.yml dest=~/.dinghy/preferences.yml
+
+    - name: Add Docker Machine Environment to .zshrc
+      lineinfile:
+        dest: ~/.zshrc
+        line: "source {{ dev_env_dir }}/ansible/dash_profile"
+        create: yes
+      when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
+
+    - name: Add Docker Machine Environment to .bash_profile
+      lineinfile:
+        dest: ~/.bash_profile
+        line: "source {{ dev_env_dir }}/ansible/dash_profile"
+        create: yes
+      when: ansible_env.SHELL == "/bin/bash"
+
+    - name: Add desk to .zshrc
+      lineinfile:
+        dest: ~/.zshrc
+        line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
+        create: yes
+      when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
+
+    - name: Add desk to .bashrc
+      lineinfile:
+        dest: ~/.bash_profile
+        line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
+        create: yes
+      when: ansible_env.SHELL == "/bin/bash"
+
+    - name: Ensure ~/.irb_history exists
+      copy:
+        content: ''
+        dest: ~/.irb_history
+        force: no
