@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/outstand/dory.git
-  revision: 4c9ff8dcd16ea3b2a4dec00ec8609b03ea2e5da4
+  revision: c76ca135a71adca2d7a445a84c7e1ca3ec311ec7
   branch: add-resolvconf
   specs:
     dory (1.0.0)
