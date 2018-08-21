@@ -90,7 +90,7 @@
     - name: Install dinghy preferences
       copy: src={{ dev_env_dir}}/docker/dinghy-preferences.yml dest=~/.dinghy/preferences.yml
 
-    - name: Add Docker Machine Environment to .zshrc
+    - name: Add dash to .zshrc
       lineinfile:
         dest: ~/.zshrc
         line: "source {{ dev_env_dir }}/ansible/dash_profile"
@@ -99,9 +99,12 @@
 
     - name: Add dash to .bashrc
       lineinfile:
-        dest: ~/.bashrc
+        dest: "{{ item }}"
         line: "source {{ dev_env_dir }}/ansible/dash_profile"
         create: yes
+      loop:
+        - ~/.bash_profile
+        - ~/.bashrc
       when: ansible_env.SHELL == "/bin/bash"
 
     - name: Add desk to .zshrc
@@ -113,9 +116,12 @@
 
     - name: Add desk to .bashrc
       lineinfile:
-        dest: ~/.bashrc
+        dest: "{{ item }}"
         line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
         create: yes
+      loop:
+        - ~/.bash_profile
+        - ~/.bashrc
       when: ansible_env.SHELL == "/bin/bash"
 
     - name: Ensure ~/.irb_history exists
