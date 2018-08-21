@@ -60,15 +60,14 @@
 
     - name: Install ruby
       apt:
-        name: ruby
+        name: ruby ruby-bundler
         state: latest
       become: yes
 
     - name: Install dory
-      gem:
-        name: dory
+      bundler:
+        chdir: "{{ dev_env_dir }}/ansible"
         user_install: no
-        state: latest
       become: yes
 
     - name: Install desk
