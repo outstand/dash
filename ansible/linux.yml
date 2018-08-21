@@ -68,6 +68,7 @@
       gem:
         name: dory
         state: latest
+      become: yes
 
     - name: Install desk
       get_url:
