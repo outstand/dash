@@ -94,10 +94,12 @@ linux_install () {
 
   echo -e "\n\n"
 
-  echo 'Checking out Dash repo...'
-  sudo mkdir /usr/local/dev-env
-  sudo chown ${USER}:${USER} /usr/local/dev-env
-  git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
+  if [ ! -d /usr/local/dev-env ]; then
+    echo 'Checking out Dash repo...'
+    sudo mkdir /usr/local/dev-env
+    sudo chown ${USER}:${USER} /usr/local/dev-env
+    git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
+  fi
 }
 
 mac_install
