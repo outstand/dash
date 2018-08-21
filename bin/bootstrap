@@ -7,72 +7,102 @@ ANSIBLE_NEEDED="2.0"
 # $1 - SYSTEM VERSION
 # $2 - NEEDED VERSION
 update_needed () {
-    if [[ $1 == $2 ]]
-    then
-        return 0
-    fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    # fill empty fields in ver1 with zeros
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
-    do
-        ver1[i]=0
-    done
-    for ((i=0; i<${#ver1[@]}; i++))
-    do
-        if [[ -z ${ver2[i]} ]]
-        then
-            # fill empty fields in ver2 with zeros
-            ver2[i]=0
-        fi
-        if ((10#${ver1[i]} > 10#${ver2[i]}))
-        then
-            return 1
-        fi
-        if ((10#${ver1[i]} < 10#${ver2[i]}))
-        then
-            return 0
-        fi
-    done
+  if [[ $1 == $2 ]]
+  then
     return 0
+  fi
+  local IFS=.
+  local i ver1=($1) ver2=($2)
+  # fill empty fields in ver1 with zeros
+  for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+  do
+    ver1[i]=0
+  done
+  for ((i=0; i<${#ver1[@]}; i++))
+  do
+    if [[ -z ${ver2[i]} ]]
+    then
+      # fill empty fields in ver2 with zeros
+      ver2[i]=0
+    fi
+    if ((10#${ver1[i]} > 10#${ver2[i]}))
+    then
+      return 1
+    fi
+    if ((10#${ver1[i]} < 10#${ver2[i]}))
+    then
+      return 0
+    fi
+  done
+  return 0
 }
 
-## Install or Update Homebrew ##
-echo 'Installing or Updating Homebrew...'
-which -s brew
-if [[ $? != 0 ]] ; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-else
-    brew update
-fi
-echo -e "\n\n"
-
-## Install or Update Ansible ##
-echo 'Installing or Updating Ansible...'
-which -s ansible-playbook
-if [[ $? != 0 ]] ; then
-  echo "ansible installation..."
-    brew install ansible
-else # Ansible needs to be at least 1.9
-  ANSIBLE_VERSION=$(ansible --version | grep ansible | cut -d " " -f 2)
-  if update_needed $ANSIBLE_VERSION $ANSIBLE_NEEDED; then
-    echo "Ansible is too old: $ANSIBLE_VERSION. We need >$ANSIBLE_NEEDED"
-    echo "Updating ansible through homebrew..."
-    brew upgrade ansible
-    brew link --overwrite ansible
-  else
-    echo "Ansible version is $ANSIBLE_VERSION. Update not needed..."
+mac_install () {
+  if [[ "$(uname)" != 'Darwin' ]]; then
+    return 1
   fi
-fi
-echo -e "\n\n"
 
-## Check out a copy of this repo (first time only) ##
-echo 'Checking out Dash repo...'
-sudo mkdir /usr/local/dev-env
-sudo chown ${USER}:admin /usr/local/dev-env
-git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
+  ## Install or Update Homebrew ##
+  echo 'Installing or Updating Homebrew...'
+  which -s brew
+  if [[ $? != 0 ]] ; then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  else
+    brew update
+  fi
+  echo -e "\n\n"
 
-## Run Ansible Playbook ##
-echo 'Handing Playbook to Ansible...'
+  ## Install or Update Ansible ##
+  echo 'Installing or Updating Ansible...'
+  which -s ansible-playbook
+  if [[ $? != 0 ]] ; then
+    echo "ansible installation..."
+    brew install ansible
+  else # Ansible needs to be at least 1.9
+    ANSIBLE_VERSION=$(ansible --version | grep ansible | cut -d " " -f 2)
+    if update_needed $ANSIBLE_VERSION $ANSIBLE_NEEDED; then
+      echo "Ansible is too old: $ANSIBLE_VERSION. We need >$ANSIBLE_NEEDED"
+      echo "Updating ansible through homebrew..."
+      brew upgrade ansible
+      brew link --overwrite ansible
+    else
+      echo "Ansible version is $ANSIBLE_VERSION. Update not needed..."
+    fi
+  fi
+
+  echo -e "\n\n"
+
+  if [ ! -d /usr/local/dev-env ]; then
+    echo 'Checking out Dash repo...'
+    sudo mkdir /usr/local/dev-env
+    sudo chown ${USER}:admin /usr/local/dev-env
+    git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
+  fi
+}
+
+linux_install () {
+  if [[ "$(uname)" != 'Linux' ]]; then
+    return 1
+  fi
+
+  echo 'Installing or Updating Ansible...'
+  sudo apt-get update
+  sudo apt-get install -y software-properties-common
+  sudo apt-add-repository -y ppa:ansible/ansible
+  sudo apt-get update
+  sudo apt-get install -y ansible
+
+  echo -e "\n\n"
+
+  echo 'Checking out Dash repo...'
+  sudo mkdir /usr/local/dev-env
+  sudo chown ${USER}:${USER} /usr/local/dev-env
+  git clone https://github.com/outstand/dash.git /usr/local/dev-env 2>/dev/null
+}
+
+mac_install
+linux_install
+
+echo 'Running dev update'
 echo -e "\n\n"
 /usr/local/dev-env/bin/dev update

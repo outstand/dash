@@ -18,40 +18,38 @@
       changed_when: false
 
     - name: Tap homebrew services
-      homebrew_tap: tap=homebrew/services
+      homebrew_tap:
+        name: homebrew/services
 
     - name: Tap outstand/dinghy
-      homebrew_tap: tap=outstand/dinghy state=present
+      homebrew_tap:
+        name: outstand/dinghy
 
     - name: Tap codekitchen/dinghy
-      homebrew_tap: tap=codekitchen/dinghy state=present
+      homebrew_tap:
+        name: codekitchen/dinghy
 
     - name: Tap outstand/desk
-      homebrew_tap: tap=outstand/desk state=present
+      homebrew_tap:
+        name: outstand/desk
 
     - name: Update Homebrew
-      homebrew: update_homebrew=yes
-
-    - name: Remove docker
       homebrew:
-        name: "{{ item }}"
-        state: absent
-      with_items:
-        - docker111
-        - docker1103
+        update_homebrew: yes
 
     - name: Install Docker and Extras
       homebrew:
-        name: "{{ item }}"
+        name: "{{ packages }}"
         state: latest
-      with_items:
-        - docker
-        - docker-machine
-        - docker-machine-parallels
-        - docker-compose
-        - outstand/dinghy/dinghy
-        - outstand/desk/desk
-        - zsh
+      vars:
+        packages:
+          - docker
+          - docker-machine
+          - docker-machine-parallels
+          - docker-compose
+          - outstand/dinghy/dinghy
+          - outstand/desk/desk
+          - zsh
 
     - name: Create dinghy preferences directory
       file: path=~/.dinghy state=directory

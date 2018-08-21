@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'open3'
 require 'pathname'
+require 'rbconfig'
 
 class DevTool
   MAIN_HELP_BANNER = <<HEREDOC
@@ -111,13 +112,21 @@ HEREDOC
 
   def update(args)
     system('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
-    exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1,")
+    exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1,") if mac?
+    exec("ansible-playbook #{root_dir}/ansible/linux.yml -i 127.0.0.1, -K -v") if linux?
   end
 
   def root_dir
     '/usr/local/dev-env'
   end
 
+  def mac?
+    RbConfig::CONFIG['host_os'] =~ /darwin/
+  end
+
+  def linux?
+    RbConfig::CONFIG['host_os'] =~ /linux/
+  end
 end
 
 DevTool.new(ARGV) if __FILE__==$0
