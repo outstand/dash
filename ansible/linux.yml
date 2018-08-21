@@ -60,8 +60,12 @@
 
     - name: Install ruby
       apt:
-        name: ruby ruby-bundler
+        name: "{{ packages }}"
         state: latest
+      vars:
+        packages:
+          - ruby
+          - ruby-bundler
       become: yes
 
     - name: Install dory
