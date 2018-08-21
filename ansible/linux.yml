@@ -97,9 +97,9 @@
         create: yes
       when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
 
-    - name: Add Docker Machine Environment to .bash_profile
+    - name: Add dash to .bashrc
       lineinfile:
-        dest: ~/.bash_profile
+        dest: ~/.bashrc
         line: "source {{ dev_env_dir }}/ansible/dash_profile"
         create: yes
       when: ansible_env.SHELL == "/bin/bash"
@@ -113,7 +113,7 @@
 
     - name: Add desk to .bashrc
       lineinfile:
-        dest: ~/.bash_profile
+        dest: ~/.bashrc
         line: '[ -n "$DESK_ENV" ] && source "$DESK_ENV" || true'
         create: yes
       when: ansible_env.SHELL == "/bin/bash"
