@@ -111,6 +111,7 @@
         daemon_reload: yes
         state: restarted
         name: NetworkManager
+      become: yes
       when: network_manager_conf.stat.exists == True and network_manager_replace.changed == True
 
     - name: Add dash to .zshrc
