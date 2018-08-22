@@ -98,10 +98,10 @@
       register: network_manager_conf
 
     - name: Disable NetworkManager dnsmasq
-      lineinfile:
+      replace:
         path: /etc/NetworkManager/NetworkManager.conf
         regexp: "^dns=dnsmasq"
-        line: "#dns=dnsmasq"
+        replace: "#dns=dnsmasq"
       become: yes
       when: network_manager_conf.stat.exists == True
 
