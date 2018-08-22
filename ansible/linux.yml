@@ -93,6 +93,17 @@
         src: "{{ dev_env_dir }}/docker/dory.yml"
         dest: ~/.dory.yml
 
+    - stat:
+        path: /etc/NetworkManager/NetworkManager.conf
+      register: network_manager_conf
+
+    - name: Disable NetworkManager dnsmasq
+      lineinfile:
+        path: /etc/NetworkManager/NetworkManager.conf
+        regexp: "^dns=dnsmasq"
+        line: "#dns=dnsmasq"
+      when: network_manager_conf.stat.exists == True
+
     - name: Add dash to .zshrc
       lineinfile:
         dest: ~/.zshrc
