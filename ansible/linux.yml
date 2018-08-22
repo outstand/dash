@@ -102,6 +102,7 @@
         path: /etc/NetworkManager/NetworkManager.conf
         regexp: "^dns=dnsmasq"
         line: "#dns=dnsmasq"
+      become: yes
       when: network_manager_conf.stat.exists == True
 
     - name: Add dash to .zshrc
