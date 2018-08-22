@@ -4,3 +4,5 @@ export PATH=$PATH:/usr/local/dev-env/bin
 if [[ $(which docker-machine) ]]; then
   eval "$(dev machine env)"
 fi
+export FIXUID=$(id -u)
+export FIXGID=$(id -g)
