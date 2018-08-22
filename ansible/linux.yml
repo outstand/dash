@@ -103,7 +103,15 @@
         regexp: "^dns=dnsmasq"
         replace: "#dns=dnsmasq"
       become: yes
+      register: network_manager_replace
       when: network_manager_conf.stat.exists == True
+
+    - name: Restart NetworkManager
+      systemd:
+        daemon_reload: yes
+        state: restarted
+        name: NetworkManager
+      when: network_manager_conf.stat.exists == True and network_manager_replace.changed == True
 
     - name: Add dash to .zshrc
       lineinfile:
