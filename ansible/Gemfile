@@ -5,4 +5,4 @@ end
 
 source 'https://rubygems.org'
 
-gem 'dory', github: 'outstand/dory', branch: 'add-resolvconf'
+gem 'dory', '~> 1.0'
