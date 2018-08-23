@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # We need at least ansible 2.0 for blockinfile directive
-ANSIBLE_NEEDED="2.0"
+ANSIBLE_NEEDED="2.6"
 
 # Returns 1 if upgrade is needed
 # $1 - SYSTEM VERSION
@@ -89,6 +89,7 @@ linux_install () {
   sudo apt-get update
   sudo apt-get install -y software-properties-common git ruby
   sudo apt-add-repository -y ppa:ansible/ansible
+  sleep 1 # The apt cache is still locked by something after apt-add-repository returns.
   sudo apt-get update
   sudo apt-get install -y ansible
 
