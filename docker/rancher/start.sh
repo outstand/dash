@@ -25,6 +25,9 @@ AllowGroups docker
 KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha1
 Protocol 2
 HostKey /etc/ssh/ssh_host_ed25519_key
+# Include rsa host key for fsevents
+HostKey /etc/ssh/ssh_host_rsa_key
+
 PasswordAuthentication no
 ChallengeResponseAuthentication no
 PubkeyAuthentication yes
