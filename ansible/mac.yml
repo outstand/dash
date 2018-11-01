@@ -55,6 +55,7 @@
           - outstand/dinghy/dinghy
           - outstand/desk/desk
           - zsh
+          - ruby
 
     - name: Create dinghy preferences directory
       file: path=~/.dinghy state=directory
