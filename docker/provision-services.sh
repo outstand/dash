@@ -13,3 +13,4 @@ ros service enable /var/lib/rancher/conf/parallels-tools.yml
 #ros service enable /var/lib/rancher/conf/nfs-client.yml
 ros service enable /var/lib/rancher/conf/registrator.yml
 ros service enable /var/lib/rancher/conf/multiarch.yml
+ros service enable /var/lib/rancher/conf/portainer.yml
