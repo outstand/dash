@@ -1,5 +1,5 @@
 consul:
-  image: consul:1.4.0
+  image: consul:1.4.4
   restart: always
   labels:
     - io.rancher.os.remove=false
