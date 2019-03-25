@@ -15,15 +15,12 @@ if [ "$MODE" = 'client' ] && [ -z "$DOCKER_MASTER" ]; then
 fi
 
 chown -R root:root services
-chown root:root start.sh
 if [ -d preload ]; then
   chown -R root:root preload
 fi
 
 #mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml nfs-client.yml /var/lib/rancher/conf/
 mv services/* /var/lib/rancher/conf/
-mkdir -p /opt/rancher/bin
-mv start.sh /opt/rancher/bin/
 mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
   mv docker.config.json /home/docker/.docker/config.json

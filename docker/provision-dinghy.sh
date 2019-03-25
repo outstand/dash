@@ -5,7 +5,6 @@ DOCKER_NODE=${1:-default}
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 docker-machine scp -r $DIR/rancher/services $DOCKER_NODE:services
-docker-machine scp $DIR/rancher/start.sh $DOCKER_NODE:.
 if [ -f $DIR/rancher/cloud-config.yml ]; then
   docker-machine scp $DIR/rancher/cloud-config.yml $DOCKER_NODE:.
 fi
