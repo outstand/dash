@@ -25,11 +25,6 @@
       homebrew_tap:
         name: outstand/dinghy
 
-    - name: Fix dinghy tap
-      shell: git reset --hard HEAD
-      args:
-        chdir: /usr/local/Homebrew/Library/Taps/outstand/homebrew-dinghy
-
     - name: Tap codekitchen/dinghy
       homebrew_tap:
         name: codekitchen/dinghy
