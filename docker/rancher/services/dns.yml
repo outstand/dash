@@ -7,5 +7,3 @@ dns:
   net: dns
   cap_add:
     - NET_ADMIN
-  labels:
-    io.rancher.os.after: schmooze
