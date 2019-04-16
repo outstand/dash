@@ -85,13 +85,18 @@ linux_install () {
     return 1
   fi
 
-  echo 'Installing or Updating Ansible...'
   sudo apt-get update
   sudo apt-get install -y software-properties-common git ruby
-  sudo apt-add-repository -y ppa:ansible/ansible
-  sleep 1 # The apt cache is still locked by something after apt-add-repository returns.
-  sudo apt-get update
-  sudo apt-get install -y ansible
+
+  echo 'Installing or Updating Ansible...'
+
+  which -s ansible-playbook
+  if [[ $? != 0 ]] ; then
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sleep 1 # The apt cache is still locked by something after apt-add-repository returns.
+    sudo apt-get update
+    sudo apt-get install -y ansible
+  fi
 
   echo -e "\n\n"
 
