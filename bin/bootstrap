@@ -90,7 +90,7 @@ linux_install () {
 
   echo 'Installing or Updating Ansible...'
 
-  which -s ansible-playbook
+  which ansible-playbook
   if [[ $? != 0 ]] ; then
     sudo apt-add-repository -y ppa:ansible/ansible
     sleep 1 # The apt cache is still locked by something after apt-add-repository returns.
