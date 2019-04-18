@@ -29,12 +29,12 @@
         url: https://download.docker.com/linux/ubuntu/gpg
       become: yes
 
-    - shell: /usr/bin/lsb_release -cus
-      register: upstream_version
+    - shell: /usr/bin/lsb_release -cs
+      register: release_version
 
     - name: Add docker repository
       apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ upstream_version.stdout }} stable
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ release_version.stdout }} stable
       become: yes
 
     - name: Install docker
