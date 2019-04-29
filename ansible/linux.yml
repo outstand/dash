@@ -30,12 +30,18 @@
       become: yes
 
     - shell: /usr/bin/lsb_release -cs
-      register: release_version
+      register: release_ver
       when: ansible_distribution == 'Debian'
 
+    - set_fact: release_version="{{release_ver}}"
+      when: release_ver.changed
+
     - shell: /usr/bin/lsb_release -cus
-      register: release_version
+      register: release_ver
       when: ansible_distribution == 'Ubuntu'
+
+    - set_fact: release_version="{{release_ver}}"
+      when: release_ver.changed
 
     - name: Add docker repository
       apt_repository:
