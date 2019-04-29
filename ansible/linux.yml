@@ -57,8 +57,13 @@
 
     - name: Install docker
       apt:
-        name: docker-ce docker-ce-cli containerd.io
+        name: "{{ packages }}"
         state: latest
+      vars:
+        packages:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
       become: yes
 
     - name: Add user to docker group
