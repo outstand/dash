@@ -41,5 +41,6 @@ wait_for_ssh () {
 
 wait_for_ssh
 
+docker-machine scp $DIR/update-services.sh $DOCKER_NODE:
 docker-machine scp $DIR/provision-services.sh $DOCKER_NODE:
 docker-machine ssh $DOCKER_NODE 'sudo ./provision-services.sh'

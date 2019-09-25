@@ -7,6 +7,7 @@ if [ -d preload ]; then
 fi
 
 mv services/* /var/lib/rancher/conf/
+rm -rf services
 mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
   mv docker.config.json /home/docker/.docker/config.json
