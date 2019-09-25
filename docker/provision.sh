@@ -1,25 +1,11 @@
 #!/bin/bash
 set -ex
 
-MODE=$1
-DOCKER_MASTER=$2
-
-if [ -z "$MODE" ]; then
-  echo 'mode required'
-  exit 1
-fi
-
-if [ "$MODE" = 'client' ] && [ -z "$DOCKER_MASTER" ]; then
-  echo 'docker master ip required in client mode'
-  exit 1
-fi
-
 chown -R root:root services
 if [ -d preload ]; then
   chown -R root:root preload
 fi
 
-#mv consul-$MODE.yml nomad-$MODE.yml parallels-tools.yml nfs-client.yml /var/lib/rancher/conf/
 mv services/* /var/lib/rancher/conf/
 mkdir -p /home/docker/.docker
 if [ -f docker.config.json ]; then
@@ -40,11 +26,6 @@ if [ -d preload/user ] && [ "$(ls -A preload/user)" ]; then
 fi
 
 rm -rf preload
-
-if [ "$MODE" = 'client' ]; then
-  ros config set rancher.docker.extra_args '[--cluster-store=consul://127.0.0.1:8500, --cluster-advertise=eth0:2376]'
-  ros config set rancher.environment.CONSUL_JOIN_ADDRESS $DOCKER_MASTER
-fi
 
 ros config set rancher.environment.INSTANCE_IP $(ip -o -4 addr show eth0 | awk '{print $4}' | cut -d/ -f1)
 

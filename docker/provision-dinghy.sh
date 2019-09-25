@@ -15,7 +15,7 @@ if [ -d $DIR/preload ]; then
   docker-machine scp -r $DIR/preload $DOCKER_NODE:preload
 fi
 docker-machine scp $DIR/provision.sh $DOCKER_NODE:
-docker-machine ssh $DOCKER_NODE 'sudo ./provision.sh dev'
+docker-machine ssh $DOCKER_NODE 'sudo ./provision.sh'
 
 docker-machine ssh $DOCKER_NODE 'sudo reboot' || true
 
@@ -42,4 +42,4 @@ wait_for_ssh () {
 wait_for_ssh
 
 docker-machine scp $DIR/provision-services.sh $DOCKER_NODE:
-docker-machine ssh $DOCKER_NODE 'sudo ./provision-services.sh dev'
+docker-machine ssh $DOCKER_NODE 'sudo ./provision-services.sh'
