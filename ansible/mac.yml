@@ -51,6 +51,7 @@
           - outstand/desk/desk
           - zsh
           - ruby
+          - git-lfs
 
     - name: Create dinghy preferences directory
       file: path=~/.dinghy state=directory
