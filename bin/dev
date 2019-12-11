@@ -42,10 +42,14 @@ HEREDOC
   end
 
   def compose(args)
-    project_dir = `git rev-parse --show-toplevel`.chomp
-    if $? != 0
-      puts 'Warning: unable to automatically detect project dir'
+    if (Pathname.pwd + 'docker-compose.yml').file?
       project_dir = '.'
+    else
+      project_dir = `git rev-parse --show-toplevel`.chomp
+      if $? != 0
+        puts 'Warning: unable to automatically detect project dir'
+        project_dir = '.'
+      end
     end
 
     Dir.chdir(project_dir) do
