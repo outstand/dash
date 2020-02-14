@@ -1,0 +1,38 @@
+#!/bin/bash
+
+echo "Monitoring for VPN DNS changes"
+
+while true; do
+  output=$(scutil << EOF
+list "State:.*VPN"
+exit
+EOF
+  )
+
+  if [[ $output =~ State:/Network/Service/(.+)/VPN ]]; then
+    uuid=${BASH_REMATCH[1]}
+
+    echo "Found ${uuid}"
+
+    output=$(scutil << EOF
+show State:/Network/Service/${uuid}/IPv4
+exit
+EOF
+  )
+
+    echo $output | egrep -o 'Addresses : <array> { [^{]*?10\.80\.81\.\d+[^{]*? }' > /dev/null
+    if [[ $? = "0" ]]; then
+      echo "Detected VPN on 10.80.81.0/24"
+
+      scutil << EOF
+get State:/Network/Service/${uuid}/DNS
+d.add SupplementalMatchDomains * amazonaws.com ec2.internal
+set State:/Network/Service/${uuid}/DNS
+exit
+EOF
+    fi
+  fi
+
+  sleep 2
+done
+echo "Exiting"

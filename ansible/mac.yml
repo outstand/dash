@@ -7,11 +7,12 @@
 
   tasks:
 
-    # - name: Check Sudo Password
-    #   command: ls
-    #   become: yes
-    #   become_method: sudo
-    #   changed_when: false
+    - name: Check Sudo Password
+      command: ls
+      become: yes
+      become_method: sudo
+      become_flags: -H -S -n -k
+      changed_when: false
 
     - name: Verify Parallels is installed
       shell: test -n "$(mdfind 'kMDItemCFBundleIdentifier == com.parallels.desktop.console')"
@@ -92,3 +93,15 @@
         content: ''
         dest: ~/.irb_history
         force: no
+
+    - name: Start services at login
+      copy: src={{ dev_env_dir }}/ansible/{{ item }}.plist dest=/Library/LaunchDaemons/{{ item }}.plist owner=root group=wheel
+      become: yes
+      with_items: 
+        - com.artary.vpnconnect
+
+    - name: Setup launch agents for services
+      command: launchctl load -w /Library/LaunchAgents/{{ item }}.plist
+      become: yes
+      with_items:
+        - com.artary.vpnconnect
