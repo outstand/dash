@@ -36,5 +36,5 @@ fi
 
 ros config set rancher.docker.storage_driver overlay2
 sed -ie 's/storage-driver overlay/storage-driver overlay2/' /var/lib/rancher/conf/docker
-ros engine enable docker-19.03.1
+ros engine enable docker-19.03.5
 # storage_driver changes and `engine enable` require an immediate reboot!
