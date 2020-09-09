@@ -1,5 +1,11 @@
 #cloud-config
 write_files:
+  - path: /etc/docker/daemon.json
+    permissions: "0644"
+    owner: root
+    content: |
+      { "features": { "buildkit": true } }
+
   - path: /etc/rc.local
     permissions: "0755"
     owner: root
@@ -53,3 +59,5 @@ write_files:
 rancher:
   sysctl:
     vm.max_map_count: 262144
+  docker:
+    config_file: /etc/docker/daemon.json
