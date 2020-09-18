@@ -24,6 +24,7 @@ Commands:
   update             Update Dash developer environment
   parallels          Use Parallels
   docker_desktop     Use Docker Desktop
+  unset_docker_env   Pass through eval to unset docker env vars
 
 Machine subcommands:
   create-cluster
@@ -34,12 +35,17 @@ Machine subcommands:
 
 HEREDOC
 
-  TOP_COMMANDS=%w{compose machine update parallels docker_desktop}
+  TOP_COMMANDS=%w{compose machine update parallels docker_desktop unset_docker_env}
 
   DOMAIN = 'test'
-  RESOLVER_DIR = Pathname("/etc/resolver")
+  RESOLVER_DIR = Pathname.new("/etc/resolver")
+  CONFIG_DIR = Pathname.new("~/.config/dev").expand_path
 
   def initialize(args)
+    unless CONFIG_DIR.directory?
+      system!("creating #{CONFIG_DIR}", "mkdir", "-p", CONFIG_DIR)
+    end
+
     if args.empty?
       help
     elsif TOP_COMMANDS.include?(args[0])
@@ -71,11 +77,36 @@ HEREDOC
         if (Pathname.pwd + 'docker-compose.override.yml').file?
           args.unshift('-f docker-compose.override.yml')
         end
+
+        docker_host =
+          CONFIG_DIR.join('docker_host').open('r') do |f|
+            f.read
+          end
+
+        binary = 'docker-compose'
+
+        case docker_host
+        when 'parallels'
+          if (Pathname.pwd.join('docker', 'parallels.yml')).file?
+            args.unshift('-f docker/parallels.yml')
+          end
+        when 'docker-desktop'
+          if (Pathname.pwd.join('docker', 'docker-desktop.yml')).file?
+            args.unshift('-f docker/docker-desktop.yml')
+          end
+
+          binary = 'mutagen compose'
+        else
+          raise 'Unable to detect docker host!'
+        end
+
         if (Pathname.pwd + 'development.yml').file?
           args.unshift('-f development.yml')
         end
 
-        args.unshift('mutagen compose -f docker-compose.yml')
+        args.unshift('-f docker-compose.yml')
+
+        args.unshift(binary)
         exec(args.join(' '))
       end
     end
@@ -89,6 +120,11 @@ HEREDOC
 
     puts "Removing mutagen sync volumes"
     remove_mutagen_sync_volumes
+
+    puts "Saving config"
+    CONFIG_DIR.join('docker_host').open('w') do |f|
+      f.write('parallels')
+    end
   end
 
   def docker_desktop(args)
@@ -100,7 +136,8 @@ HEREDOC
         ENV['DOCKER_CERT_PATH'] ||
         ENV['DOCKER_TLS_VERIFY'] ||
         ENV['DOCKER_MACHINE_NAME']
-      puts "WARNING: At least one docker env var is set!"
+      puts "ERROR: At least one docker env var is set!"
+      exit 1
     end
 
     puts 'Terminating mutagen sync'
@@ -108,6 +145,20 @@ HEREDOC
 
     puts "Removing mutagen sync volumes"
     remove_mutagen_sync_volumes
+
+    puts "Saving config"
+    CONFIG_DIR.join('docker_host').open('w') do |f|
+      f.write('docker-desktop')
+    end
+  end
+
+  def unset_docker_env(args)
+    puts <<~EOS
+    unset DOCKER_HOST
+    unset DOCKER_CERT_PATH
+    unset DOCKER_TLS_VERIFY
+    unset DOCKER_MACHINE_NAME
+    EOS
   end
 
   def machine(args)
