@@ -46,12 +46,15 @@ HEREDOC
       system!("creating #{CONFIG_DIR}", "mkdir", "-p", CONFIG_DIR)
     end
 
-    if args.empty?
-      help
-    elsif TOP_COMMANDS.include?(args[0])
-      send(args.shift.to_sym, args)
-    else
-      send(:compose, args)
+
+    Bundler.with_clean_env do
+      if args.empty?
+        help
+      elsif TOP_COMMANDS.include?(args[0])
+        send(args.shift.to_sym, args)
+      else
+        send(:compose, args)
+      end
     end
   end
 
