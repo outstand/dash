@@ -140,6 +140,8 @@ HEREDOC
         ENV['DOCKER_TLS_VERIFY'] ||
         ENV['DOCKER_MACHINE_NAME']
       puts "ERROR: At least one docker env var is set!"
+      puts "You can unset them for this terminal session with:"
+      puts "eval $(dev unset_docker_env)"
       exit 1
     end
 
