@@ -4,6 +4,12 @@ require 'pathname'
 require 'rbconfig'
 require 'tempfile'
 
+require 'bundler/inline'
+gemfile do
+  source 'https://rubygems.org'
+  gem 'docker-api', '~> 2.0'
+end
+
 class DevTool
   MAIN_HELP_BANNER = <<HEREDOC
 Execute various commands within the developer environment
@@ -77,6 +83,12 @@ HEREDOC
 
   def parallels(args)
     puts "Setting up Parallels"
+
+    puts 'Terminating mutagen sync'
+    system!('Terminate mutagen sync', 'mutagen', 'sync', 'terminate', '-a')
+
+    puts "Removing mutagen sync volumes"
+    remove_mutagen_sync_volumes
   end
 
   def docker_desktop(args)
@@ -90,6 +102,12 @@ HEREDOC
         ENV['DOCKER_MACHINE_NAME']
       puts "WARNING: At least one docker env var is set!"
     end
+
+    puts 'Terminating mutagen sync'
+    system!('Terminate mutagen sync', 'mutagen', 'sync', 'terminate', '-a')
+
+    puts "Removing mutagen sync volumes"
+    remove_mutagen_sync_volumes
   end
 
   def machine(args)
@@ -190,6 +208,21 @@ HEREDOC
     nameserver 127.0.0.1
     port 19322
     EOS
+  end
+
+  def remove_mutagen_sync_volumes
+    volumes = []
+    Docker::Volume.all.each do |volume|
+      volumes << volume if volume.info.dig('Labels', 'com.outstand.mutagen-sync')
+    end
+
+    volumes.each do |volume|
+      begin
+        volume.remove
+      rescue Docker::Error::ConflictError
+        puts "#{volume.id}: volume is in use - unable to remove"
+      end
+    end
   end
 end
 
