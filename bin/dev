@@ -157,6 +157,7 @@ HEREDOC
     RbConfig::CONFIG['host_os'] =~ /linux/
   end
 
+  # Many thanks to codekitchen/dinghy for the following methods
   def system!(step, *args)
     system(*args.map(&:to_s)) || raise("Error with the #{name} daemon during #{step}")
   end
