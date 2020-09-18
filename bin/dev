@@ -8,7 +8,10 @@ require 'bundler/inline'
 gemfile do
   source 'https://rubygems.org'
   gem 'docker-api', '~> 2.0'
+  gem 'outstand-tty-command', '~> 0.10'
 end
+
+require 'tty-command'
 
 class DevTool
   MAIN_HELP_BANNER = <<HEREDOC
@@ -77,8 +80,12 @@ HEREDOC
       if args.empty?
         puts `docker-compose --help`
       else
+        command = args.first
+
+        compose_files = []
+
         if (Pathname.pwd + 'docker-compose.override.yml').file?
-          args.unshift('-f docker-compose.override.yml')
+          compose_files.unshift('-f docker-compose.override.yml')
         end
 
         docker_host =
@@ -91,11 +98,11 @@ HEREDOC
         case docker_host
         when 'parallels'
           if (Pathname.pwd.join('docker', 'parallels.yml')).file?
-            args.unshift('-f docker/parallels.yml')
+            compose_files.unshift('-f docker/parallels.yml')
           end
         when 'docker-desktop'
           if (Pathname.pwd.join('docker', 'docker-desktop.yml')).file?
-            args.unshift('-f docker/docker-desktop.yml')
+            compose_files.unshift('-f docker/docker-desktop.yml')
           end
 
           binary = 'mutagen compose'
@@ -104,13 +111,21 @@ HEREDOC
         end
 
         if (Pathname.pwd + 'development.yml').file?
-          args.unshift('-f development.yml')
+          compose_files.unshift('-f development.yml')
         end
 
-        args.unshift('-f docker-compose.yml')
+        compose_files.unshift('-f docker-compose.yml')
 
+        args.unshift(*compose_files)
         args.unshift(binary)
-        exec(args.join(' '))
+        $stdout.sync
+        cmd = TTY::Command.new(printer: :quiet)
+        cmd.run(args.join(' '))
+
+        if command == 'down'
+          puts "Removing log volumes"
+          remove_log_volumes
+        end
       end
     end
   end
@@ -267,9 +282,17 @@ HEREDOC
   end
 
   def remove_mutagen_sync_volumes
+    remove_labelled_volumes(label: 'com.outstand.mutagen-sync')
+  end
+
+  def remove_log_volumes
+    remove_labelled_volumes(label: 'com.outstand.logs')
+  end
+
+  def remove_labelled_volumes(label:)
     volumes = []
     Docker::Volume.all.each do |volume|
-      volumes << volume if volume.info.dig('Labels', 'com.outstand.mutagen-sync')
+      volumes << volume if volume.info.dig('Labels', label)
     end
 
     volumes.each do |volume|
