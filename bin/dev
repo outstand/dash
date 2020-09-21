@@ -132,6 +132,8 @@ HEREDOC
         rescue Subprocess::NonZeroExit => e
           puts e.message
           exit 1
+        rescue Interrupt
+          exit 1
         end
       end
     end
