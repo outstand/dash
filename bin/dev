@@ -41,6 +41,7 @@ HEREDOC
   DOMAIN = 'test'
   RESOLVER_DIR = Pathname.new("/etc/resolver")
   CONFIG_DIR = Pathname.new("~/.config/dev").expand_path
+  SHARED_CONTAINERS_DIR = Pathname.new('/usr/local/shared_containers')
 
   def initialize(args)
     unless CONFIG_DIR.directory?
@@ -179,6 +180,9 @@ HEREDOC
     CONFIG_DIR.join('docker_host').open('w') do |f|
       f.write('docker-desktop')
     end
+
+    puts "Starting shared containers"
+    start_shared_containers
   end
 
   def unset_docker_env(args)
@@ -310,6 +314,24 @@ HEREDOC
       rescue Docker::Error::ConflictError
         puts "#{volume.id}: volume is in use - unable to remove"
       end
+    end
+  end
+
+  def start_shared_containers
+    unless SHARED_CONTAINERS_DIR.directory?
+      system!("creating #{SHARED_CONTAINERS_DIR}", "sudo", "mkdir", "-p", SHARED_CONTAINERS_DIR)
+      system!("chowning #{SHARED_CONTAINERS_DIR}", "sudo", "chown", "#{ENV['USER']}:admin", SHARED_CONTAINERS_DIR)
+
+      puts 'Cloning shared_containers...'
+      system!("cloning shared_containers", "git", "clone", "https://github.com/outstand/shared-containers", SHARED_CONTAINERS_DIR)
+    end
+
+    Dir.chdir(SHARED_CONTAINERS_DIR) do
+      system!("update shared_containers", "git", "fetch")
+      system!("update shared_containers", "git", "reset", "--hard", "origin/master")
+
+      system!("start shared_containers", "docker-compose", "up", "-d")
+      system!("start shared_containers", "mutagen", "project", "start")
     end
   end
 end
