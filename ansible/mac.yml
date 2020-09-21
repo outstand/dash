@@ -34,6 +34,10 @@
       homebrew_tap:
         name: outstand/desk
 
+    - name: Tap mutagen-io/mutagen
+      homebrew_tap:
+        name: mutagen-io/mutagen
+
     - name: Update Homebrew
       homebrew:
         update_homebrew: yes
@@ -53,6 +57,7 @@
           - zsh
           - ruby
           - git-lfs
+          - mutagen-io/mutagen/mutagen-beta
 
     - name: Create dinghy preferences directory
       file: path=~/.dinghy state=directory
