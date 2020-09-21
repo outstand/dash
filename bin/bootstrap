@@ -70,6 +70,9 @@ mac_install () {
     fi
   fi
 
+  echo 'Installing brew ruby...'
+  brew install ruby
+
   echo -e "\n\n"
 
   if [ ! -d /usr/local/dev-env ]; then
@@ -113,4 +116,5 @@ linux_install
 
 echo 'Running dev update'
 echo -e "\n\n"
+source /usr/local/dev-env/ansible/dash_profile
 /usr/local/dev-env/bin/dev update
