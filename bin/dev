@@ -257,7 +257,7 @@ HEREDOC
 
   # Many thanks to codekitchen/dinghy for the following methods
   def system!(step, *args)
-    system(*args.map(&:to_s)) || raise("Error with the #{name} daemon during #{step}")
+    system(*args.map(&:to_s)) || raise("Error during #{step}")
   end
 
   def configure_resolver!
