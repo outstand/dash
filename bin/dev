@@ -8,10 +8,8 @@ require 'bundler/inline'
 gemfile do
   source 'https://rubygems.org'
   gem 'docker-api', '~> 2.0'
-  gem 'outstand-tty-command', '~> 0.10'
+  gem 'subprocess', '~> 1.5'
 end
-
-require 'tty-command'
 
 class DevTool
   MAIN_HELP_BANNER = <<HEREDOC
@@ -85,7 +83,7 @@ HEREDOC
         compose_files = []
 
         if (Pathname.pwd + 'docker-compose.override.yml').file?
-          compose_files.unshift('-f docker-compose.override.yml')
+          compose_files.unshift('-f', 'docker-compose.override.yml')
         end
 
         docker_host =
@@ -93,38 +91,47 @@ HEREDOC
             f.read
           end
 
-        binary = 'docker-compose'
+        binary = ['docker-compose']
 
         case docker_host
         when 'parallels'
           if (Pathname.pwd.join('docker', 'parallels.yml')).file?
-            compose_files.unshift('-f docker/parallels.yml')
+            compose_files.unshift('-f', 'docker/parallels.yml')
           end
         when 'docker-desktop'
           if (Pathname.pwd.join('docker', 'docker-desktop.yml')).file?
-            compose_files.unshift('-f docker/docker-desktop.yml')
+            compose_files.unshift('-f', 'docker/docker-desktop.yml')
           end
 
-          binary = 'mutagen compose'
+          binary = ['mutagen', 'compose']
         else
           raise 'Unable to detect docker host!'
         end
 
         if (Pathname.pwd + 'development.yml').file?
-          compose_files.unshift('-f development.yml')
+          compose_files.unshift('-f', 'development.yml')
         end
 
-        compose_files.unshift('-f docker-compose.yml')
+        compose_files.unshift('-f', 'docker-compose.yml')
 
         args.unshift(*compose_files)
-        args.unshift(binary)
+        args.unshift(*binary)
         $stdout.sync
-        cmd = TTY::Command.new(printer: :quiet)
-        cmd.run(args.join(' '))
+        begin
+          Subprocess.check_call(
+            args,
+            stdin: $stdin,
+            stdout: $stdout,
+            stderr: $stderr
+          )
 
-        if command == 'down'
-          puts "Removing log volumes"
-          remove_log_volumes
+          if command == 'down'
+            puts "Removing log volumes"
+            remove_log_volumes
+          end
+        rescue Subprocess::NonZeroExit => e
+          puts e.message
+          exit 1
         end
       end
     end
