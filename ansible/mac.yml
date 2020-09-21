@@ -105,3 +105,17 @@
       become: yes
       with_items:
         - com.artary.vpnconnect
+
+    - name: Add brew ruby to PATH in .zshrc
+      lineinfile:
+        dest: ~/.zshrc
+        line: 'export PATH=/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.7.0/bin:$PATH'
+        create: yes
+      when: ansible_env.SHELL == "/bin/zsh" or ansible_env.SHELL == "/usr/local/bin/zsh"
+
+    - name: Add brew ruby to PATH in .bash_profile
+      lineinfile:
+        dest: ~/.bash_profile
+        line: 'export PATH=/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.7.0/bin:$PATH'
+        create: yes
+      when: ansible_env.SHELL == "/bin/bash"
