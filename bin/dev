@@ -128,7 +128,10 @@ HEREDOC
 
           if command == 'down'
             puts "Removing log volumes"
+            # TODO: only try to remove log volumes for the current project
             remove_log_volumes
+            # TODO: Auto retry on ERROR: error while removing network: network app_default id <id> has active endpoints
+            # TODO: Remove sync volumes for the current project
           end
         rescue Subprocess::NonZeroExit => e
           puts e.message
