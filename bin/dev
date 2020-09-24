@@ -364,7 +364,7 @@ HEREDOC
       begin
         volume.remove
       rescue Docker::Error::ConflictError
-        puts "#{volume.id}: volume is in use - unable to remove"
+        puts pastel.yellow("#{volume.id}: volume is in use - unable to remove")
       end
     end
   end
