@@ -9,7 +9,11 @@ gemfile do
   source 'https://rubygems.org'
   gem 'docker-api', '~> 2.0'
   gem 'subprocess', '~> 1.5'
+  gem 'outstand-tty-command'
+  gem 'pastel'
 end
+
+require 'tty-command'
 
 class DevTool
   MAIN_HELP_BANNER = <<HEREDOC
@@ -28,7 +32,6 @@ Commands:
   unset_docker_env   Pass through eval to unset docker env vars
 
 Machine subcommands:
-  create-cluster
   destroy
   up
   create (overridden)
@@ -45,7 +48,7 @@ HEREDOC
 
   def initialize(args)
     unless CONFIG_DIR.directory?
-      system!("creating #{CONFIG_DIR}", "mkdir", "-p", CONFIG_DIR)
+      cmd.run("mkdir", "-p", CONFIG_DIR)
     end
 
 
@@ -58,6 +61,11 @@ HEREDOC
         send(:compose, args)
       end
     end
+
+  rescue TTY::Command::ExitError => e
+    pastel = Pastel.new
+    puts pastel.red(e.message)
+    exit 1
   end
 
   def help
@@ -147,7 +155,8 @@ HEREDOC
     puts "Setting up Parallels"
 
     puts 'Terminating mutagen sync'
-    system!('Terminate mutagen sync', 'mutagen', 'sync', 'terminate', '-a')
+    cmd.run('mutagen', 'sync', 'terminate', '-a')
+    stop_mutagen_project(dir: SHARED_CONTAINERS_DIR)
 
     puts "Removing mutagen sync volumes"
     remove_mutagen_sync_volumes
@@ -174,7 +183,7 @@ HEREDOC
     end
 
     puts 'Terminating mutagen sync'
-    system!('Terminate mutagen sync', 'mutagen', 'sync', 'terminate', '-a')
+    cmd.run('mutagen', 'sync', 'terminate', '-a')
 
     puts "Removing mutagen sync volumes"
     remove_mutagen_sync_volumes
@@ -207,34 +216,31 @@ HEREDOC
         machine_name = args.first
       end
       if `docker-machine status #{machine_name}` =~ /Running/
-        system("docker-machine env #{machine_name}")
+        cmd.run("docker-machine env #{machine_name}")
       else
         $stderr.puts "#{machine_name} is not running"
       end
     elsif args.first == 'create'
       puts 'Running `dinghy create` (ignoring args)'
-      system('sudo ls > /dev/null')
-      system('dinghy create')
-      unless system("#{root_dir}/docker/provision-dinghy.sh")
+      cmd.run('sudo ls > /dev/null')
+      cmd.run('dinghy create')
+      unless cmd.run!("#{root_dir}/docker/provision-dinghy.sh").success?
         $stderr.puts "Failed to provision!"
         exit 1
       end
-      system('dinghy restart')
-      system('eval $(dinghy env); docker start dns > /dev/null')
-    elsif args.first == 'create-cluster'
-      system('sudo ls > /dev/null')
-      exec("#{root_dir}/docker/start-cluster.sh")
+      cmd.run('dinghy restart')
+      cmd.run('eval $(dinghy env); docker start dns > /dev/null')
     elsif args.first == 'up'
       puts 'Running `dinghy up` (ignoring args)'
-      system('sudo ls > /dev/null')
+      cmd.run('sudo ls > /dev/null')
       exec('dinghy up')
     elsif args.first == 'stop'
       puts 'Running `dinghy stop` (ignoring args)'
-      system('sudo ls > /dev/null')
+      cmd.run('sudo ls > /dev/null')
       exec('dinghy stop')
     elsif args.first == 'destroy'
       puts 'Running `dinghy destroy` (ignoring args)'
-      system('sudo ls > /dev/null')
+      cmd.run('sudo ls > /dev/null')
       exec('dinghy destroy')
     else
       args.unshift('docker-machine')
@@ -243,7 +249,7 @@ HEREDOC
   end
 
   def update(args)
-    system('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
+    cmd.run('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
     exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1, -K") if mac?
     exec("ansible-playbook #{root_dir}/ansible/linux.yml -i 127.0.0.1, -K -v") if linux?
   end
@@ -262,11 +268,21 @@ HEREDOC
     RbConfig::CONFIG['host_os'] =~ /linux/
   end
 
-  # Many thanks to codekitchen/dinghy for the following methods
-  def system!(step, *args)
-    system(*args.map(&:to_s)) || raise("Error during #{step}")
+  def cmd
+    return @_cmd if defined?(@_cmd)
+
+    @_cmd =
+      TTY::Command.new(printer: :quiet)
   end
 
+  def quiet_cmd
+    return @_quiet_cmd if defined?(@_quiet_cmd)
+
+    @_quiet_cmd =
+      TTY::Command.new(printer: :null)
+  end
+
+  # Many thanks to codekitchen/dinghy for the following methods
   def configure_resolver!
     if resolver_configured?
       puts "DNS resolution is correctly configured"
@@ -275,15 +291,15 @@ HEREDOC
 
     puts "setting up DNS resolution, this will require sudo"
     unless RESOLVER_DIR.directory?
-      system!("creating #{RESOLVER_DIR}", "sudo", "mkdir", "-p", RESOLVER_DIR)
+      cmd.run("sudo", "mkdir", "-p", RESOLVER_DIR)
     end
     Tempfile.open('dinghy-dnsmasq') do |f|
       f.write(resolver_contents)
       f.close
-      system!("creating #{@resolver_file}", "sudo", "cp", f.path, @resolver_file)
-      system!("creating #{@resolver_file}", "sudo", "chmod", "644", @resolver_file)
+      cmd.run("sudo", "cp", f.path, @resolver_file)
+      cmd.run("sudo", "chmod", "644", @resolver_file)
     end
-    system!("restarting mDNSResponder", "sudo", "killall", "mDNSResponder")
+    cmd.run("sudo", "killall", "mDNSResponder")
   end
 
   def resolver_configured?
@@ -322,19 +338,37 @@ HEREDOC
 
   def start_shared_containers
     unless SHARED_CONTAINERS_DIR.directory?
-      system!("creating #{SHARED_CONTAINERS_DIR}", "sudo", "mkdir", "-p", SHARED_CONTAINERS_DIR)
-      system!("chowning #{SHARED_CONTAINERS_DIR}", "sudo", "chown", "#{ENV['USER']}:admin", SHARED_CONTAINERS_DIR)
+      cmd.run("sudo", "mkdir", "-p", SHARED_CONTAINERS_DIR)
+      cmd.run("sudo", "chown", "#{ENV['USER']}:admin", SHARED_CONTAINERS_DIR)
 
       puts 'Cloning shared_containers...'
-      system!("cloning shared_containers", "git", "clone", "https://github.com/outstand/shared-containers", SHARED_CONTAINERS_DIR)
+      cmd.run("git", "clone", "https://github.com/outstand/shared-containers", SHARED_CONTAINERS_DIR)
     end
 
     Dir.chdir(SHARED_CONTAINERS_DIR) do
-      system!("update shared_containers", "git", "fetch")
-      system!("update shared_containers", "git", "reset", "--hard", "origin/master")
+      cmd.run("git", "fetch")
+      cmd.run("git", "reset", "--hard", "origin/master")
 
-      system!("start shared_containers", "docker-compose", "up", "-d")
-      system!("start shared_containers", "mutagen", "project", "start")
+      cmd.run("docker-compose", "up", "-d")
+      start_mutagen_project(dir: SHARED_CONTAINERS_DIR)
+    end
+  end
+
+  def start_mutagen_project(dir:)
+    Dir.chdir(dir) do
+      result = quiet_cmd.run!('mutagen project list')
+      if result.failure? && result.err == "Error: project not running\n"
+        cmd.run("mutagen", "project", "start")
+      end
+    end
+  end
+
+  def stop_mutagen_project(dir:)
+    Dir.chdir(dir) do
+      result = quiet_cmd.run!('mutagen project list')
+      if result.success?
+        cmd.run("mutagen", "project", "terminate")
+      end
     end
   end
 end
