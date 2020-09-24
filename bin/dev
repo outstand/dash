@@ -63,7 +63,6 @@ HEREDOC
     end
 
   rescue TTY::Command::ExitError => e
-    pastel = Pastel.new
     puts pastel.red(e.message)
     exit 1
   end
@@ -77,11 +76,13 @@ HEREDOC
       project_dir = '.'
     else
       project_dir = `git rev-parse --show-toplevel`.chomp
-      if $? != 0
-        puts 'Warning: unable to automatically detect project dir'
-        project_dir = '.'
+      if $? != 0 || !(Pathname.new(project_dir).join('docker-compose.yml').file?)
+        puts pastel.red('ERROR: unable to automatically detect project dir')
+        exit 1
       end
     end
+
+    @compose_project_name = Pathname.new(project_dir).expand_path.basename.to_s
 
     Dir.chdir(project_dir) do
       if args.empty?
@@ -136,10 +137,10 @@ HEREDOC
 
           if command == 'down'
             puts "Removing log volumes"
-            # TODO: only try to remove log volumes for the current project
             remove_log_volumes
             # TODO: Auto retry on ERROR: error while removing network: network app_default id <id> has active endpoints
-            # TODO: Remove sync volumes for the current project
+            puts "Removing sync volumes"
+            remove_mutagen_sync_volumes
           end
         rescue Subprocess::NonZeroExit => e
           puts e.message
@@ -159,7 +160,7 @@ HEREDOC
     stop_mutagen_project(dir: SHARED_CONTAINERS_DIR)
 
     puts "Removing mutagen sync volumes"
-    remove_mutagen_sync_volumes
+    remove_mutagen_sync_volumes(all: true)
 
     puts "Saving config"
     CONFIG_DIR.join('docker_host').open('w') do |f|
@@ -186,7 +187,7 @@ HEREDOC
     cmd.run('mutagen', 'sync', 'terminate', '-a')
 
     puts "Removing mutagen sync volumes"
-    remove_mutagen_sync_volumes
+    remove_mutagen_sync_volumes(all: true)
 
     puts "Saving config"
     CONFIG_DIR.join('docker_host').open('w') do |f|
@@ -282,6 +283,13 @@ HEREDOC
       TTY::Command.new(printer: :null)
   end
 
+  def pastel
+    return @_pastel if defined?(@_pastel)
+
+    @_pastel =
+      Pastel.new
+  end
+
   # Many thanks to codekitchen/dinghy for the following methods
   def configure_resolver!
     if resolver_configured?
@@ -313,18 +321,43 @@ HEREDOC
     EOS
   end
 
-  def remove_mutagen_sync_volumes
-    remove_labelled_volumes(label: 'com.outstand.mutagen-sync')
+  def remove_mutagen_sync_volumes(all: false)
+    labels = {
+      'com.outstand.mutagen-sync' => true,
+    }
+
+    if all == false
+      labels.merge!('com.docker.compose.project' => @compose_project_name)
+    end
+
+    remove_labelled_volumes(
+      labels: labels
+    )
   end
 
   def remove_log_volumes
-    remove_labelled_volumes(label: 'com.outstand.logs')
+    remove_labelled_volumes(
+      labels: {
+        'com.outstand.logs' => true,
+        'com.docker.compose.project' => @compose_project_name
+      }
+    )
   end
 
-  def remove_labelled_volumes(label:)
+  def remove_labelled_volumes(labels:)
     volumes = []
     Docker::Volume.all.each do |volume|
-      volumes << volume if volume.info.dig('Labels', label)
+      volumes << volume if labels.all? do |label, value|
+        if value == true
+          volume.info.dig('Labels', label)
+        else
+          volume.info.dig('Labels', label) == value
+        end
+      end
+    end
+
+    unless volumes.empty?
+      puts "removing: #{volumes.map(&:id).join(", ")}"
     end
 
     volumes.each do |volume|
