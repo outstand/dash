@@ -135,6 +135,8 @@ HEREDOC
             stderr: $stderr
           )
 
+          puts
+
           if command == 'down'
             puts "Removing log volumes"
             remove_log_volumes
