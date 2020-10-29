@@ -1,8 +1,5 @@
 # Dash Developer Environment Profile
 # This file should be shell-agnostic
 export PATH=/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.7.0/bin:$PATH:/usr/local/dev-env/bin
-if [[ $(which docker-machine) ]]; then
-  eval "$(dev machine env)"
-fi
 export FIXUID=$(id -u)
 export FIXGID=$(id -g)
