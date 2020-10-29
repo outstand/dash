@@ -14,10 +14,6 @@
       become_flags: -H -S -n -k
       changed_when: false
 
-    - name: Verify Parallels is installed
-      shell: test -n "$(mdfind 'kMDItemCFBundleIdentifier == com.parallels.desktop.console')"
-      changed_when: false
-
     - name: Tap homebrew services
       homebrew_tap:
         name: homebrew/services
