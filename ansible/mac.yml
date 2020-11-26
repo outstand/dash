@@ -18,14 +18,6 @@
       homebrew_tap:
         name: homebrew/services
 
-    - name: Tap outstand/dinghy
-      homebrew_tap:
-        name: outstand/dinghy
-
-    - name: Tap codekitchen/dinghy
-      homebrew_tap:
-        name: codekitchen/dinghy
-
     - name: Tap outstand/desk
       homebrew_tap:
         name: outstand/desk
@@ -38,29 +30,18 @@
       homebrew:
         update_homebrew: yes
 
-    - name: Install Docker and Extras
+    - name: Install Packages
       homebrew:
         name: "{{ packages }}"
         state: latest
       vars:
         packages:
-          - docker
-          - docker-machine
-          - docker-machine-parallels
-          - docker-compose
-          - outstand/dinghy/dinghy
           - outstand/desk/desk
           - zsh
           - ruby
           - git
           - git-lfs
           - mutagen-io/mutagen/mutagen-beta
-
-    - name: Create dinghy preferences directory
-      file: path=~/.dinghy state=directory
-
-    - name: Install dinghy preferences
-      copy: src={{ dev_env_dir}}/docker/dinghy-preferences.yml dest=~/.dinghy/preferences.yml
 
     - name: Add Docker Machine Environment to .zshrc
       lineinfile:
