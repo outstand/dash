@@ -96,11 +96,6 @@ HEREDOC
           compose_files.unshift('-f', 'docker-compose.override.yml')
         end
 
-        docker_host =
-          CONFIG_DIR.join('docker_host').open('r') do |f|
-            f.read
-          end
-
         binary = ['docker-compose']
 
         case docker_host
@@ -253,8 +248,35 @@ HEREDOC
 
   def update(args)
     cmd.run('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
-    exec("ansible-playbook #{root_dir}/ansible/mac.yml -i 127.0.0.1, -K") if mac?
-    exec("ansible-playbook #{root_dir}/ansible/linux.yml -i 127.0.0.1, -K -v") if linux?
+
+    ansible_cmd = nil
+    if mac?
+      ansible_cmd = ['ansible-playbook', "#{root_dir}/ansible/mac.yml", '-i', '127.0.0.1', '-K']
+    elsif linux?
+      ansible_cmd = ['ansible-playbook', "#{root_dir}/ansible/linux.yml", '-i', '127.0.0.1', '-K', '-v']
+    else
+      raise "Unknown platform!"
+    end
+
+    $stdout.sync
+    begin
+      Subprocess.check_call(
+        ansible_cmd,
+        stdin: $stdin,
+        stdout: $stdout,
+        stderr: $stderr
+      )
+      puts
+    rescue Subprocess::NonZeroExit => e
+      puts e.message
+      exit 1
+    rescue Interrupt
+      exit 1
+    end
+
+    if docker_host == nil
+      docker_desktop []
+    end
   end
 
   private
@@ -404,6 +426,17 @@ HEREDOC
       if result.success?
         cmd.run("mutagen", "project", "terminate")
       end
+    end
+  end
+
+  def docker_host
+    file = CONFIG_DIR.join('docker_host')
+    if file.exist?
+      file.open('r') do |f|
+        f.read
+      end
+    else
+      nil
     end
   end
 end
