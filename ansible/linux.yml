@@ -36,7 +36,7 @@
     - set_fact: release_version="{{release_ver}}"
       when: release_ver.changed
 
-    - shell: /usr/bin/lsb_release -cus
+    - shell: /usr/bin/lsb_release -cs
       register: release_ver
       when: ansible_distribution == 'Ubuntu'
 
