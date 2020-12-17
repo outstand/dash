@@ -23,12 +23,6 @@
           - software-properties-common
       become: yes
 
-    - name: Install docker apt key
-      apt_key:
-        id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
-        url: https://download.docker.com/linux/ubuntu/gpg
-      become: yes
-
     - shell: /usr/bin/lsb_release -cs
       register: release_ver
       when: ansible_distribution == 'Debian'
@@ -42,44 +36,6 @@
 
     - set_fact: release_version="{{release_ver}}"
       when: release_ver.changed
-
-    - name: Add docker repository
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ release_version.stdout }} stable
-      become: yes
-      when: ansible_distribution == 'Debian'
-
-    - name: Add docker repository
-      apt_repository:
-        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ release_version.stdout }} stable
-      become: yes
-      when: ansible_distribution == 'Ubuntu'
-
-    - name: Install docker
-      apt:
-        name: "{{ packages }}"
-        state: latest
-      vars:
-        packages:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-      become: yes
-
-    - name: Add user to docker group
-      user:
-        name: "{{ ansible_user_id }}"
-        groups: docker
-        append: yes
-      become: yes
-
-    - name: Download docker-compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/1.24.0/docker-compose-Linux-x86_64
-        dest: /usr/local/bin/docker-compose
-        mode: 0755
-        checksum: sha256:bee6460f96339d5d978bb63d17943f773e1a140242dfa6c941d5e020a302c91b
-      become: yes
 
     - name: Install ruby
       apt:
