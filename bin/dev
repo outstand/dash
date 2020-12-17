@@ -186,25 +186,25 @@ HEREDOC
     puts "Removing mutagen sync volumes"
     remove_mutagen_sync_volumes(all: true)
 
+    puts "Starting shared containers"
+    start_shared_containers
+
     puts "Saving config"
     CONFIG_DIR.join('docker_host').open('w') do |f|
       f.write('docker-desktop')
     end
-
-    puts "Starting shared containers"
-    start_shared_containers
   end
 
   def native_docker(args)
     puts "Setting up native docker"
 
+    puts "Starting shared containers"
+    start_shared_containers
+
     puts "Saving config"
     CONFIG_DIR.join('docker_host').open('w') do |f|
       f.write('native')
     end
-
-    puts "Starting shared containers"
-    start_shared_containers
   end
 
   def unset_docker_env(args)
