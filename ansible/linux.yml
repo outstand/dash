@@ -44,7 +44,7 @@
     - set_fact: release_version="{{release_ver}}"
       when: release_ver.changed
 
-    - name: Install ruby
+    - name: Install packages
       apt:
         name: "{{ packages }}"
         state: latest
@@ -52,6 +52,9 @@
         packages:
           - ruby
           - ruby-bundler
+          - zsh
+          - git-lfs
+          - amazon-ecr-credential-helper
       become: yes
 
     - name: Install dory
@@ -66,18 +69,6 @@
         url: https://raw.githubusercontent.com/outstand/desk/master/desk
         dest: /usr/local/bin/desk
         mode: 0755
-      become: yes
-
-    - name: Install zsh
-      apt:
-        name: zsh
-        state: latest
-      become: yes
-
-    - name: Install git-lfs
-      apt:
-        name: git-lfs
-        state: latest
       become: yes
 
     - name: Update Homebrew
