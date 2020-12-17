@@ -91,6 +91,7 @@
       vars:
         packages:
           - mutagen-io/mutagen/mutagen-beta
+          - gh
 
     - name: Install dory preferences
       copy:
