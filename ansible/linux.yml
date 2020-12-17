@@ -74,6 +74,18 @@
         state: latest
       become: yes
 
+    - name: Update Homebrew
+      homebrew:
+        update_homebrew: yes
+
+    - name: Install Homebrew Packages
+      homebrew:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages:
+          - mutagen-io/mutagen/mutagen-beta
+
     - name: Install dory preferences
       copy:
         src: "{{ dev_env_dir }}/docker/dory.yml"
