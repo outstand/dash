@@ -74,6 +74,12 @@
         state: latest
       become: yes
 
+    - name: Install git-lfs
+      apt:
+        name: git-lfs
+        state: latest
+      become: yes
+
     - name: Update Homebrew
       homebrew:
         update_homebrew: yes
