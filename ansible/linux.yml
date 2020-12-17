@@ -6,6 +6,13 @@
     dev_env_dir: /usr/local/dev-env
 
   tasks:
+    - name: Check Sudo Password
+      command: ls
+      become: yes
+      become_method: sudo
+      become_flags: -H -S -n -k
+      changed_when: false
+
     - name: Update apt cache
       apt:
         update_cache: yes
