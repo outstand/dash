@@ -195,6 +195,18 @@ HEREDOC
     start_shared_containers
   end
 
+  def native_docker(args)
+    puts "Setting up native docker"
+
+    puts "Saving config"
+    CONFIG_DIR.join('docker_host').open('w') do |f|
+      f.write('native')
+    end
+
+    puts "Starting shared containers"
+    start_shared_containers
+  end
+
   def unset_docker_env(args)
     puts <<~EOS
     unset DOCKER_HOST
@@ -275,7 +287,8 @@ HEREDOC
     end
 
     if docker_host == nil
-      docker_desktop []
+      docker_desktop [] if mac?
+      native_docker [] if linux?
     end
   end
 
@@ -397,7 +410,9 @@ HEREDOC
     unless SHARED_CONTAINERS_DIR.directory?
       cmd.run("sudo", "mkdir", "-p", SHARED_CONTAINERS_DIR)
       cmd.run("sudo", "chown", "#{ENV['USER']}:admin", SHARED_CONTAINERS_DIR)
+    end
 
+    if SHARED_CONTAINERS_DIR.empty?
       puts 'Cloning shared_containers...'
       cmd.run("git", "clone", "https://github.com/outstand/shared-containers", SHARED_CONTAINERS_DIR)
     end
