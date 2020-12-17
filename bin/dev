@@ -109,6 +109,10 @@ HEREDOC
           end
 
           binary = ['mutagen', 'compose']
+        when 'native'
+          if (Pathname.pwd.join('docker', 'native.yml')).file?
+            compose_files.unshift('-f', 'docker/native.yml')
+          end
         else
           raise 'Unable to detect docker host!'
         end
