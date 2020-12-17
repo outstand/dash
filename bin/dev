@@ -409,7 +409,11 @@ HEREDOC
   def start_shared_containers
     unless SHARED_CONTAINERS_DIR.directory?
       cmd.run("sudo", "mkdir", "-p", SHARED_CONTAINERS_DIR)
-      cmd.run("sudo", "chown", "#{ENV['USER']}:admin", SHARED_CONTAINERS_DIR)
+      if mac?
+        cmd.run("sudo", "chown", "#{ENV['USER']}:admin", SHARED_CONTAINERS_DIR)
+      else
+        cmd.run("sudo", "chown", "#{ENV['USER']}:#{ENV['USER']}", SHARED_CONTAINERS_DIR)
+      end
     end
 
     if SHARED_CONTAINERS_DIR.empty?
