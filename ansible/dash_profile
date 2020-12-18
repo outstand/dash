@@ -3,3 +3,4 @@
 export PATH=/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.7.0/bin:$PATH:/usr/local/dev-env/bin
 export FIXUID=$(id -u)
 export FIXGID=$(id -g)
+export COMPOSE_DOCKER_CLI_BUILD=1
