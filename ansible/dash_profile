@@ -4,3 +4,4 @@ export PATH=/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.0.0/bin:/usr/loca
 export FIXUID=$(id -u)
 export FIXGID=$(id -g)
 export COMPOSE_DOCKER_CLI_BUILD=1
+export CAROOT=${HOME}/.config/dev/mkcert
