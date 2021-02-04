@@ -90,66 +90,78 @@ HEREDOC
       else
         command = args.first
 
-        compose_files = []
-
-        if (Pathname.pwd + 'docker-compose.override.yml').file?
-          compose_files.unshift('-f', 'docker-compose.override.yml')
-        end
-
-        binary = ['docker-compose']
-
-        case docker_host
-        when 'parallels'
-          if (Pathname.pwd.join('docker', 'parallels.yml')).file?
-            compose_files.unshift('-f', 'docker/parallels.yml')
-          end
-        when 'docker-desktop'
-          if (Pathname.pwd.join('docker', 'docker-desktop.yml')).file?
-            compose_files.unshift('-f', 'docker/docker-desktop.yml')
-          end
-
-          binary = ['mutagen', 'compose']
-        when 'native'
-          if (Pathname.pwd.join('docker', 'native.yml')).file?
-            compose_files.unshift('-f', 'docker/native.yml')
-          end
+        if command == 'kick'
+          raise ArgumentError, 'service required' if args.size < 2
+          service = args[1]
+          compose_command!(['rm', '-sf', service])
+          compose_command!(['up', '-d', service])
         else
-          raise 'Unable to detect docker host!'
+          compose_command!(args)
         end
 
-        if (Pathname.pwd + 'development.yml').file?
-          compose_files.unshift('-f', 'development.yml')
-        end
-
-        compose_files.unshift('-f', 'docker-compose.yml')
-
-        args.unshift(*compose_files)
-        args.unshift(*binary)
-        $stdout.sync
-        begin
-          Subprocess.check_call(
-            args,
-            stdin: $stdin,
-            stdout: $stdout,
-            stderr: $stderr
-          )
-
-          puts
-
-          if command == 'down'
-            puts "Removing log volumes"
-            remove_log_volumes
-            # TODO: Auto retry on ERROR: error while removing network: network app_default id <id> has active endpoints
-            puts "Removing sync volumes"
-            remove_mutagen_sync_volumes
-          end
-        rescue Subprocess::NonZeroExit => e
-          puts e.message
-          exit 1
-        rescue Interrupt
-          exit 1
+        if command == 'down'
+          puts "Removing log volumes"
+          remove_log_volumes
+          # TODO: Auto retry on ERROR: error while removing network: network app_default id <id> has active endpoints
+          puts "Removing sync volumes"
+          remove_mutagen_sync_volumes
         end
       end
+    end
+  end
+
+  def compose_command!(args)
+    compose_files = []
+
+    if (Pathname.pwd + 'docker-compose.override.yml').file?
+      compose_files.unshift('-f', 'docker-compose.override.yml')
+    end
+
+    binary = ['docker-compose']
+
+    case docker_host
+    when 'parallels'
+      if (Pathname.pwd.join('docker', 'parallels.yml')).file?
+        compose_files.unshift('-f', 'docker/parallels.yml')
+      end
+    when 'docker-desktop'
+      if (Pathname.pwd.join('docker', 'docker-desktop.yml')).file?
+        compose_files.unshift('-f', 'docker/docker-desktop.yml')
+      end
+
+      binary = ['mutagen', 'compose']
+    when 'native'
+      if (Pathname.pwd.join('docker', 'native.yml')).file?
+        compose_files.unshift('-f', 'docker/native.yml')
+      end
+    else
+      raise 'Unable to detect docker host!'
+    end
+
+    if (Pathname.pwd + 'development.yml').file?
+      compose_files.unshift('-f', 'development.yml')
+    end
+
+    compose_files.unshift('-f', 'docker-compose.yml')
+
+    args.unshift(*compose_files)
+    args.unshift(*binary)
+
+    $stdout.sync
+    begin
+      Subprocess.check_call(
+        args,
+        stdin: $stdin,
+        stdout: $stdout,
+        stderr: $stderr
+      )
+
+      puts
+    rescue Subprocess::NonZeroExit => e
+      puts e.message
+      exit 1
+    rescue Interrupt
+      exit 1
     end
   end
 
