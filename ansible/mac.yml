@@ -42,6 +42,8 @@
           - git
           - git-lfs
           - mutagen-io/mutagen/mutagen-beta
+          - mkcert
+          - nss
 
     - name: Add Docker Machine Environment to .zshrc
       lineinfile:
