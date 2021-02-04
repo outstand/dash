@@ -91,10 +91,10 @@ HEREDOC
         command = args.first
 
         if command == 'kick'
-          raise ArgumentError, 'service required' if args.size < 2
-          service = args[1]
-          compose_command!(['rm', '-sf', service])
-          compose_command!(['up', '-d', service])
+          raise ArgumentError, 'one or more services required' if args.size < 2
+          services = args[1..-1]
+          compose_command!(['rm', '-sf'] + services)
+          compose_command!(['up', '-d'] + services)
         else
           compose_command!(args)
         end
