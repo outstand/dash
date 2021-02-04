@@ -39,7 +39,7 @@ Machine subcommands:
 
 HEREDOC
 
-  TOP_COMMANDS=%w{compose machine update parallels docker_desktop unset_docker_env}
+  TOP_COMMANDS=%w{compose machine update parallels docker_desktop unset_docker_env mkcert}
 
   DOMAIN = 'test'
   RESOLVER_DIR = Pathname.new("/etc/resolver")
@@ -271,6 +271,38 @@ HEREDOC
     else
       args.unshift('docker-machine')
       exec(args.join(' '))
+    end
+  end
+
+  def mkcert(args)
+    %w[mkcert cacerts certs].each do |dir|
+      dir = CONFIG_DIR.join(dir)
+      unless dir.directory?
+        dir.mkdir
+      end
+    end
+
+    caroot = CONFIG_DIR.join('mkcert')
+    ENV['CAROOT'] = caroot.to_s
+
+    if caroot.empty?
+      puts pastel.green('Installing local CA')
+      cmd.run('mkcert -install')
+    end
+
+    public_caroot = CONFIG_DIR.join('cacerts')
+    if public_caroot.empty?
+      puts pastel.green('Copying local CA to public directory')
+      FileUtils.cp caroot.join('rootCA.pem'), public_caroot.join('dev-mkcert.crt')
+    end
+
+    cert_dir = CONFIG_DIR.join('certs')
+    if !cert_dir.join('s3.test.crt').file? || !cert_dir.join('s3.test.key').file?
+      puts pastel.green('Generating certs for s3.test')
+      Dir.chdir(cert_dir) do
+        cmd.run('mkcert -cert-file s3.test.crt -key-file s3.test.key s3.test *.s3.test')
+        puts pastel.yellow('WARNING: You must restart http-proxy')
+      end
     end
   end
 
