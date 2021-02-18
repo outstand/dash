@@ -27,7 +27,6 @@ Commands:
   compose            Manage containers (default)
   machine            Manage the virtual machine
   update             Update Dash developer environment
-  parallels          Use Parallels
   docker_desktop     Use Docker Desktop
   unset_docker_env   Pass through eval to unset docker env vars
 
@@ -39,7 +38,7 @@ Machine subcommands:
 
 HEREDOC
 
-  TOP_COMMANDS=%w{compose machine update parallels docker_desktop unset_docker_env mkcert}
+  TOP_COMMANDS=%w{compose machine update docker_desktop unset_docker_env mkcert}
 
   DOMAIN = 'test'
   RESOLVER_DIR = Pathname.new("/etc/resolver")
@@ -120,10 +119,6 @@ HEREDOC
     binary = ['docker-compose']
 
     case docker_host
-    when 'parallels'
-      if (Pathname.pwd.join('docker', 'parallels.yml')).file?
-        compose_files.unshift('-f', 'docker/parallels.yml')
-      end
     when 'docker-desktop'
       if (Pathname.pwd.join('docker', 'docker-desktop.yml')).file?
         compose_files.unshift('-f', 'docker/docker-desktop.yml')
@@ -162,22 +157,6 @@ HEREDOC
       exit 1
     rescue Interrupt
       exit 1
-    end
-  end
-
-  def parallels(args)
-    puts "Setting up Parallels"
-
-    puts 'Terminating mutagen sync'
-    cmd.run('mutagen', 'sync', 'terminate', '-a')
-    stop_mutagen_project(dir: SHARED_CONTAINERS_DIR)
-
-    puts "Removing mutagen sync volumes"
-    remove_mutagen_sync_volumes(all: true)
-
-    puts "Saving config"
-    CONFIG_DIR.join('docker_host').open('w') do |f|
-      f.write('parallels')
     end
   end
 
