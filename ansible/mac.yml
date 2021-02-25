@@ -85,8 +85,8 @@
       with_items: 
         - com.artary.vpnconnect
 
-    - name: Setup launch agents for services
-      command: launchctl load -w /Library/LaunchAgents/{{ item }}.plist
+    - name: Setup launch daemons for services
+      command: launchctl load -w /Library/LaunchDaemons/{{ item }}.plist
       become: yes
       with_items:
         - com.artary.vpnconnect
