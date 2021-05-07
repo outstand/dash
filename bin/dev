@@ -283,6 +283,14 @@ HEREDOC
         puts pastel.yellow('WARNING: You must restart http-proxy')
       end
     end
+
+    if !cert_dir.join('app.outstand.test.crt').file? || !cert_dir.join('app.outstand.test.key').file?
+      puts pastel.green('Generating certs for app.outstand.test')
+      Dir.chdir(cert_dir) do
+        cmd.run('mkcert -cert-file app.outstand.test.crt -key-file app.outstand.test.key app.outstand.test')
+        puts pastel.yellow('WARNING: You must restart http-proxy')
+      end
+    end
   end
 
   def update(args)
