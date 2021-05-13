@@ -289,7 +289,10 @@ HEREDOC
     end
 
     if cert_created
-      puts pastel.yellow('WARNING: You must restart http-proxy')
+      puts pastel.yellow('WARNING: Restarting http-proxy')
+      Dir.chdir(SHARED_CONTAINERS_DIR) do
+        compose(['kick', 'http-proxy'])
+      end
     end
   end
 
@@ -325,6 +328,8 @@ HEREDOC
       docker_desktop [] if mac?
       native_docker [] if linux?
     end
+
+    mkcert('')
   end
 
   private
