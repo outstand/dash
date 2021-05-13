@@ -276,20 +276,20 @@ HEREDOC
     end
 
     cert_dir = CONFIG_DIR.join('certs')
-    if !cert_dir.join('s3.test.crt').file? || !cert_dir.join('s3.test.key').file?
-      puts pastel.green('Generating certs for s3.test')
-      Dir.chdir(cert_dir) do
-        cmd.run('mkcert -cert-file s3.test.crt -key-file s3.test.key s3.test *.s3.test')
-        puts pastel.yellow('WARNING: You must restart http-proxy')
+    cert_created = false
+    domains = ['s3.test', 'app.outstand.test', 'webpacker.test']
+    domains.each do |domain|
+      if !cert_dir.join("#{domain}.crt").file? || !cert_dir.join("#{domain}.key").file?
+        puts pastel.green("Generating certs for #{domain}")
+        Dir.chdir(cert_dir) do
+          cmd.run("mkcert -cert-file #{domain}.crt -key-file #{domain}.key #{domain} *.#{domain}")
+          cert_created = true
+        end
       end
     end
 
-    if !cert_dir.join('app.outstand.test.crt').file? || !cert_dir.join('app.outstand.test.key').file?
-      puts pastel.green('Generating certs for app.outstand.test')
-      Dir.chdir(cert_dir) do
-        cmd.run('mkcert -cert-file app.outstand.test.crt -key-file app.outstand.test.key app.outstand.test')
-        puts pastel.yellow('WARNING: You must restart http-proxy')
-      end
+    if cert_created
+      puts pastel.yellow('WARNING: You must restart http-proxy')
     end
   end
 
