@@ -38,7 +38,7 @@ Machine subcommands:
 
 HEREDOC
 
-  TOP_COMMANDS=%w{compose machine update docker_desktop unset_docker_env mkcert}
+  TOP_COMMANDS=%w{compose machine update post_update docker_desktop unset_docker_env mkcert}
 
   DOMAIN = 'test'
   RESOLVER_DIR = Pathname.new("/etc/resolver")
@@ -298,7 +298,10 @@ HEREDOC
 
   def update(args)
     cmd.run('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
+    exec('dev', 'post_update')
+  end
 
+  def post_update(args)
     ansible_cmd = nil
     if mac?
       ansible_cmd = ['ansible-playbook', "#{root_dir}/ansible/mac.yml", '-i', '127.0.0.1', '-K']
