@@ -277,7 +277,7 @@ HEREDOC
 
     cert_dir = CONFIG_DIR.join('certs')
     cert_created = false
-    domains = ['s3.test', 'app.outstand.test', 'webpacker.test']
+    domains = ['s3.test', 'app.outstand.test', 'webpacker.test', 'ember.test']
     domains.each do |domain|
       if !cert_dir.join("#{domain}.crt").file? || !cert_dir.join("#{domain}.key").file?
         puts pastel.green("Generating certs for #{domain}")
