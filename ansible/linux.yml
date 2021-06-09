@@ -83,6 +83,7 @@
         packages:
           - mutagen-io/mutagen/mutagen-beta
           - gh
+          - mkcert
 
     - name: Install dory preferences
       copy:
