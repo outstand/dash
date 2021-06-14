@@ -297,7 +297,7 @@ HEREDOC
   end
 
   def update(args)
-    cmd.run('cd /usr/local/dev-env && git fetch && git reset --hard origin/master') unless args.first == '--no-pull'
+    cmd.run('cd /usr/local/dev-env && git fetch && git reset --hard origin/main') unless args.first == '--no-pull'
     exec('dev', 'post_update')
   end
 
@@ -467,7 +467,7 @@ HEREDOC
 
     Dir.chdir(SHARED_CONTAINERS_DIR) do
       cmd.run("git", "fetch")
-      cmd.run("git", "reset", "--hard", "origin/master")
+      cmd.run("git", "reset", "--hard", "origin/main")
 
       cmd.run("docker-compose", "up", "-d")
       start_mutagen_project(dir: SHARED_CONTAINERS_DIR)
